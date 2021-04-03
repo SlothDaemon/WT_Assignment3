@@ -1,0 +1,64 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='description', content= #{description})
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='css/style.css')
+    link(rel='icon', type='image/png', href='img/html5.png')
+    link(rel='preconnect', href='https://fonts.gstatic.com')
+    link(href='https://fonts.googleapis.com/css2?family=Roboto&display=swap', rel='stylesheet')
+    script(src='js/script.js')
+    title #{title}
+  body#body
+  main#grid
+    header
+      if msg
+        if typ == 'ok'
+          article.message.message--ok #{msg} 
+              a X
+        else if typ == 'warning'
+          article.message.message--warning #{msg}
+              a X
+        else if typ == 'error'
+          article.message.message--error #{msg}
+              a X
+        else 
+          article.message #{msg}
+              a X
+
+    nav#nav
+      a(href='/') Home
+      a(href='history') History
+      a(href='features') Features
+      a(href='w3c') W3C
+      a(href='bernerslee') Berners-Lee
+      a(href='assessment') Assessment
+      if user
+        form#logout Welcome, 
+          b #{user}
+      else
+        form#login
+
+    block content
+    
+    footer#footer
+      a(href='https://www.uu.nl/', target='blank')
+        img.footer__logo(src='img/uu.png', alt='The Utrecht University logo. Click to go to the Utrecht University website.')
+      table.footer__credit-table.footer__credit-table--focussed
+        thead
+          tr
+            th
+              a(href='https://www.uu.nl/', target='blank')  Utrecht University
+        tbody
+          tr
+            td Dani&euml;l Salomons
+            td 6508383
+          tr
+            td Ravan Strijker                
+            td 7257642   
+          tr
+            td Pim Versteeg                
+            td 3804488
+      p All content courtesy of 
+        a(href='https://en.wikipedia.org/', target='_blank') Wikipedia.

@@ -1,0 +1,218 @@
+extends layout
+block content
+    section#main-section
+      article#article
+        h1 Features
+        p The W3C proposed a greater reliance on modularity as a key part of the plan to make faster progress, meaning identifying specific features, either proposed or already existing in the spec, and advancing them as separate specifications. Some technologies that were originally defined in HTML 5 itself are now defined in separate specifications:
+                 
+        ul
+          li HTML Working Group &ndash; HTML Canvas 2D Context.
+          li Web Apps Working Group &ndash; Web Messaging, Web workers, Web storage, WebSocket, Server-sent events, Web Components (this was not part of HTML 5, though); the Web Applications Working Group was closed in October 2015 and its deliverables transferred to the Web Platform Working Group (WPWG).                    
+          li IETF HyBi Working Group &ndash; WebSocket Protocol.                     
+          li WebRTC Working Group &ndash; WebRTC.
+          li Web Media Text Tracks Community Group &ndash; WebVTT.
+
+        p After the standardization of the HTML 5 specification in October 2014, the core vocabulary and features are being extended in four ways. Likewise, some features that were removed from the original HTML 5 specification have been standardized separately as modules, such as Microdata and Canvas. Technical specifications introduced as HTML 5 extensions such as Polyglot markup have also been standardized as modules. Some W3C specifications that were originally separate specifications have been adapted as HTML 5 extensions or features, such as SVG. Some features that might have slowed down the standardization of HTML 5 will be standardized as upcoming specifications, instead. HTML 5.1 was finalized in 2016, and it is currently on the standardization track at the W3C.                 
+        
+        h2#markup Markup
+        section#Markup
+          p HTML 5 introduces elements and attributes that reflect typical usage on modern websites. Some of them are semantic replacements for common uses of generic block (
+            code div
+            | ) and inline (
+            code span
+            | ) elements, for example 
+            code nav
+            |  (website navigation block), 
+            code footer
+            |  (usually referring to bottom of web page or to last lines of HTML code), or 
+            code audio
+            |  and 
+            code video
+            |  instead of 
+            code object
+            | . Some deprecated elements from HTML 4.01 have been dropped, including purely presentational elements such as 
+            code font
+            |  and 
+            code center
+            | , whose effects have long been superseded by the more capable Cascading Style Sheets. There is also a renewed emphasis on the importance of DOM scripting in Web behavior.                     
+          p The HTML 5 syntax is no longer based on SGML despite the similarity of its markup. It has, however, been designed to be backward-compatible with common parsing of older versions of HTML. It comes with a new introductory line that looks like an SGML document type declaration, &lt;!DOCTYPE html&gt;, which triggers the standards-compliant rendering mode. Since 5 January 2009, HTML 5 also includes Web Forms 2.0, a previously separate WHATWG specification.
+               
+        h2#newapis New APIs
+        section#New-APIs
+          p In addition to specifying markup, HTML 5 specifies scripting application programming interfaces (APIs) that can be used with JavaScript. Existing Document Object Model (DOM) interfaces are extended and de facto features documented. There are also new APIs, such as:                     
+          ul
+            li Canvas
+            li Timed Media Playback                 
+            li Offline
+            li Editable content                
+            li Drag and drop       
+            li History          
+            li MIME type and protocol handler registration                
+            li Microdata
+            li Web Messaging              
+            li Web Storage &ndash; a key-value pair storage framework that provides behaviour similar to cookies but with larger storage capacity and improved API                  
+          p Not all of the above technologies (also see the corresponding 
+            a(href='#figure') figure
+            | ) are included in the W3C HTML 5 specification, though they are in the WHATWG HTML specification. Some related technologies, which are not part of either the W3C HTML 5 or the WHATWG HTML specification, are as follows. The W3C publishes specifications for these separately:
+                     
+          ul
+            li Geolocation
+            li IndexedDB &ndash; an indexed hierarchical key-value store (formerly WebSimpleDB)            
+            li File &ndash; an API intended to handle file uploads and file manipulation
+            li Directories and System &ndash; an API intended to satisfy client-side-storage use cases not well served by databases                        
+            li File Writer &ndash; an API for writing to files from web applications
+            li Web Audio &ndash; a high-level JavaScript API for processing and synthesizing audio in web applications                        
+            li ClassList
+            li Web cryptography API              
+            li WebRTC   
+            li Web SQL Database &ndash; a local SQL Database (no longer maintained)
+           
+          p HTML 5 cannot provide animation within web pages. Additional JavaScript or CSS3 is necessary for animating HTML elements. Animation is also possible using JavaScript and HTML 4, and within SVG elements through SMIL, although browser support of the latter remains uneven as of 2011.
+
+        h2#xhtml5 XHTML 5 (XML-serialized HTML 5)
+        section#XHTML5
+          p XML documents must be served with an XML Internet media type (often called &quot;MIME type&quot;) such as application/xhtml+xml or application/xml, and must conform to strict, well-formed syntax of XML. XHTML 5 is simply XML-serialized HTML 5 data (that is, HTML 5 constrained to XHTML&apos;s strict requirements, e.g., not having any unclosed tags), sent with one of XML media types. HTML that has been written to conform to both the HTML and XHTML specifications and therefore produces the same DOM tree whether parsed as HTML or XML is known as polyglot markup.
+       
+        h2#errorhandling Error handling
+
+        section#Error-handling
+          p HTML 5 is designed so that old browsers can safely ignore new HTML 5 constructs. In contrast to HTML 4.01, the HTML 5 specification gives detailed rules for lexing and parsing, with the intent that compliant browsers will produce the same results when parsing incorrect syntax. Although HTML 5 now defines a consistent behavior for &quot;tag soup&quot; documents, those documents are not regarded as conforming to the HTML 5 standard.
+       
+        h2#popularity Popularity            
+        section#Popularity
+          p According to a report released on 30 September 2011, 34 of the world&apos;s top 100 Web sites were using HTML 5 &ndash; the adoption led by search engines and social networks. Another report released in August 2013 has shown that 153 of the Fortune 500 U.S. companies implemented HTML5 on their corporate websites.                     
+          p Since 2014, HTML 5 is at least partially supported by most popular layout engines.
+
+      aside#aside
+        figure.section__figure
+          img#figure(src='img/taxonomy.svg', alt='HTML5 APIs and related technologies taxonomy and status.')     
+          figcaption HTML5 related APIs.
+          
+        h2#differences Differences from HTML 4.01 and XHTML 1.x
+        section#Differences
+          p The following is a cursory list of differences and some specific examples.
+          ul
+            li New parsing rules: oriented towards flexible parsing and compatibility; not based on SGML                        
+            li Ability to use inline SVG and MathML in 
+              code text/html                        
+            li New elements: 
+              code article
+              | , 
+              code aside
+              | , 
+              code audio
+              | , 
+              code bdi
+              | , 
+              code canvas
+              | , 
+              code command
+              | , 
+              code data
+              | , 
+              code datalist
+              | , 
+              code details
+              | , 
+              code embed
+              | , 
+              code figcaption
+              | , 
+              code figure
+              | , 
+              code footer
+              | , 
+              code header
+              | , 
+              code keygen
+              | , 
+              code mark
+              | , 
+              code meter
+              | , 
+              code nav
+              | , 
+              code output
+              | , 
+              code progress
+              | , 
+              code rp
+              | , 
+              code rt
+              | , 
+              code ruby
+              | , 
+              code section
+              | , 
+              code source
+              | , 
+              code summary
+              | , 
+              code time
+              | , 
+              code track
+              | , 
+              code video
+              | , 
+              code wbr                        
+            li New types of form controls: 
+              code dates and times
+              | , 
+              code email
+              | , 
+              code url
+              | , 
+              code search
+              | , 
+              code number
+              | , 
+              code range
+              | , 
+              code tel
+              | , 
+              code color                        
+            li New attributes: 
+              code charset
+              |  (on 
+              code meta
+              | ), 
+              code async
+              |  (on 
+              code script
+              | )                        
+            li Global attributes (that can be applied for every element): 
+              code id
+              | , 
+              code tabindex
+              | , 
+              code hidden
+              | , 
+              code data-*
+              |  (custom data attributes)                        
+            li Deprecated elements will be dropped altogether: 
+              code acronym
+              | , 
+              code applet
+              | , 
+              code basefont
+              | , 
+              code big
+              | , 
+              code center
+              | , 
+              code dir
+              | , 
+              code font
+              | , 
+              code frame
+              | , 
+              code frameset
+              | , 
+              code isindex
+              | , 
+              code noframes
+              | , 
+              code strike
+              | , 
+              code tt
+          p W3C Working Group publishes &quot;HTML5 differences from HTML 4&quot;, which provides a complete outline of additions, removals and changes between HTML 5 and HTML 4.
