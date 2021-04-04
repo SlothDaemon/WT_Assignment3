@@ -1,0 +1,33 @@
+CREATE TABLE Topic(
+T_Title varchar(255) NOT NULL PRIMARY KEY,
+Descriptionlink varchar(255)
+);
+
+CREATE TABLE Quiz(
+Q_Title varchar(255) NOT NULL PRIMARY KEY,
+Topic varchar(255),
+FOREIGN KEY (Topic) REFERENCES Topic(T_Title)
+);
+
+CREATE TABLE Question(
+QA_Title varchar(255) NOT NULL PRIMARY KEY,
+Type varchar(255),
+Problem_Statement varchar(255),
+Answer varchar(255),
+Quiz varchar(255),
+FOREIGN KEY (Quiz) REFERENCES Quiz(Q_Title)
+);
+
+CREATE TABLE RU(
+Name varchar(255),
+Login varchar(255) NOT NULL PRIMARY KEY,
+Password varchar(255) NOT NULL
+);
+
+CREATE TABLE Attempt(
+Question varchar(255),
+RU varchar(255),
+Attempt varchar(255),
+FOREIGN KEY (Question) REFERENCES Question(QA_Title),
+FOREIGN KEY (RU) REFERENCES RU(Login)
+);
