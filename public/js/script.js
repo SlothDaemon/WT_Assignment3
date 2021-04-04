@@ -6,12 +6,10 @@ function addHandlers(){
 }
 
 function addLoginUI(){
-   // todo: create and check for login cookies somehow
+   // ID first determined by server session
    let loginform = document.getElementById('login');
    let logoutform = document.getElementById('logout');
-   // if (logged in)
-   // console.log(document.cookie);
-   //let loggedin = false;  // for sake of debugging
+
    if (logoutform) {
       logoutform.setAttribute('method','POST');
       logoutform.setAttribute('id','loginform');
@@ -60,6 +58,7 @@ function addLoginUI(){
    
 }
 
+/* messages are now handled by serverside js
 function popupMessage(type, content){
    let header = document.getElementsByTagName("header")[0];
    let msg = document.createElement("ASIDE");
@@ -82,34 +81,11 @@ function popupMessage(type, content){
    close.textContent="X";
    msg.appendChild(close);
    header.appendChild(msg);
-}
+}*/
 
 function closeMessage(e){
    if (e.target && e.target.nodeName == "A"){
       e.target.parentNode.style.display = 'none';
-   }
-}
-
-function handleQueries(){
-   let queries = window.location.search.substring(1);
-   let possibleMessages = {
-      'loginfailed':'Login failed',
-      'loginsuccess':'Successfully logged in',
-      'loginfailed':'Something went wrong during login, please try again',
-      'registerfailed':'Something went wrong during registration, please try again',
-      'registersuccess':'Successfully registered account',
-      'logoutsuccess':'Logged out successfully',
-      'logoutfailed':'Something went wrong during logout, please try again',
-      'something':'Something went wrong'
-   }; // Will possibly be changed with the introduction of express-sessions
-   if (queries){
-      let pairs = queries.split('&');
-      for (let i = 0; i<pairs.length; i++){
-         let pair = pairs[i].split('=');
-         if (pair[0] == "ok" || pair[0] == "warning" || pair[0] == "error"){
-            popupMessage(pair[0],possibleMessages[pair[1]]);
-         }
-      }
    }
 }
 
@@ -172,7 +148,6 @@ function recursiveDomWalk(elem, whitelist, mainElements, sections) {
    if (elem.nodeType == 1 && whitelist.includes(elem.nodeName)){
       if (elem.id !== "main-section" && elem.nodeName === "SECTION") {
          sections.push(elem.id);
-         //console.log(elem.nodeName + ' ' + elem.id);
       }
       else {
          mainElements.push(elem.id);
@@ -295,15 +270,6 @@ function addSelectors(){
       }
       select.appendChild(option);
       footer.appendChild(select);
-   }
-}
-
-function createLoginForm(){
-   // todo
-   let nav = document.getElementById("nav")
-   let form = docment.createElement('FORM');
-   for (let i = 0; i<2; i++){
-      let label = document.createElement("")
    }
 }
 
@@ -461,7 +427,6 @@ function initialise() {
    fillEditor();
    enableEditor();
    collapseArticleHeaders();
-   handleQueries();
    addLoginUI();
 }
 

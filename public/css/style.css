@@ -60,17 +60,17 @@ li:nth-of-type(even){
 
 .message--ok{
     background-color: rgb(92, 250, 153);
-    border:rgb(23, 228, 91);
+    border-color:rgb(23, 228, 91);
 }
 
 .message--warning{
     background-color: rgb(250, 213, 92);
-    border:rgb(228, 163, 23);
+    border-color:rgb(228, 163, 23);
 }
 
 .message--error{
     background-color: rgb(255, 117, 117);
-    border:rgb(228, 23, 23);
+    border-color:rgb(228, 23, 23);
 }
 
 .message::before{

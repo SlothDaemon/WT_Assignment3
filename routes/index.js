@@ -4,10 +4,8 @@ var router = express.Router();
 pages = ['/','/assessment','/bernerslee','/features','/history','/w3c'];
 router.all(pages, function(req,res,next){
   res.locals.user = req.session.user;
-  res.locals.msg = req.session.message;
-  res.locals.typ = req.session.messagetype;
-  req.session.message = undefined;
-  req.session.messagetype = undefined;
+  res.locals.msgs = req.session.messages || [];
+  req.session.messages = [];
   next();
 });
 

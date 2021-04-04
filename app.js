@@ -45,20 +45,18 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  res.locals.user = req.session.user;
-  res.locals.msg = req.session.message;
-  res.locals.typ = req.session.messagetype;
-  req.session.message = undefined;
-  req.session.messagetype = undefined;
-  // set locals, only providing error in development
+  // Custom error handler (custom flash message system)
+  res.locals.user = req.session.user
+  res.locals.msgs = req.session.messages || [];
+  res.locals.msgs.push(['error', 'Error ' + err.status + ' ' + err.message]);
+  
+  // verbose error page (too verbose for production, please comment out for end product)
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.locals.title = "Error " + err.status;
   res.render('error');
-  
+  //res.redirect('back');
 });
 
 module.exports = app;
