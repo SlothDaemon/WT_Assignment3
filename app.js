@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'html565e232ed43477b2f5r1r463r1f86f14386tr4365tr143q65fcb4413023548fcehtml5',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   maxAge: 60*60*2*1000
 }));
 
