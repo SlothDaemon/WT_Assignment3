@@ -4,11 +4,11 @@ html
     meta(charset='utf-8')
     meta(name='description', content= #{description})
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='stylesheet', href='css/style.css')
-    link(rel='icon', type='image/png', href='img/html5.png')
+    link(rel='stylesheet', href='http://localhost:3000/css/style.css')
+    link(rel='icon', type='image/png', href='http://localhost:3000/img/html5.png')
     link(rel='preconnect', href='https://fonts.gstatic.com')
     link(href='https://fonts.googleapis.com/css2?family=Roboto&display=swap', rel='stylesheet')
-    script(src='js/script.js')
+    script(src='http://localhost:3000/js/script.js')
     title #{title}
   body#body
   main#grid
@@ -29,15 +29,16 @@ html
       - }
 
     nav#nav
-      a(href='/') Home
-      a(href='history') History
-      a(href='features') Features
-      a(href='w3c') W3C
-      a(href='bernerslee') Berners-Lee
-      a(href='assessment') Assessment
+      a(href='http://localhost:3000/') Home
+      a(href='http://localhost:3000/history') History
+      a(href='http://localhost:3000/features') Features
+      a(href='http://localhost:3000/w3c') W3C
+      a(href='http://localhost:3000/bernerslee') Berners-Lee
+      a(href='http://localhost:3000/assessment') Assessment
       if user
         form#logout Welcome, 
-          b #{user}
+          - var link = 'http://localhost:3000/users/'+user;
+          a(href=link)  #{user}
       else
         form#login
 
@@ -45,7 +46,7 @@ html
     
     footer#footer
       a(href='https://www.uu.nl/', target='blank')
-        img.footer__logo(src='img/uu.png', alt='The Utrecht University logo. Click to go to the Utrecht University website.')
+        img.footer__logo(src='http://localhost:3000/img/uu.png', alt='The Utrecht University logo. Click to go to the Utrecht University website.')
       table.footer__credit-table.footer__credit-table--focussed
         thead
           tr

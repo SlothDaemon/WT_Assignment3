@@ -101,16 +101,6 @@ li:nth-of-type(even){
     margin-right:4px;
 }
 
-#editingBio input {
-    width:400px;
-    height:200px;
-}
-
-#editingBio button {
-    position: relative;
-    bottom:0;
-}
-
 #grid {
     display:grid;
     gap: 10px;

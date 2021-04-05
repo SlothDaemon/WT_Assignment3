@@ -1,0 +1,17 @@
+extends ../layout
+
+block content
+  section#main-section
+    article#article
+      h1 Profile of #{profile.name}
+      if !profile.bio
+        p This is #{profile.name}'s profile!
+      else
+        p #{profile.bio}
+      if user == profile.name
+        form#editbio
+      h3 Completion
+      - var percentile = (profile.completed / total) * 100;
+          p #{profile.name} has completed #{profile.completed} out of #{total} questions, or a completion rate of #{percentile}%!
+          if user == profile.name
+            p This session, you have completed #{profile.session} questions!

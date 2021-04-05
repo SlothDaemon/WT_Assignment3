@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-pages = ['/','/assessment','/bernerslee','/features','/history','/w3c'];
+pages = ['/','/index','/assessment','/bernerslee','/features','/history','/w3c']
 router.all(pages, function(req,res,next){
   res.locals.user = req.session.user;
   res.locals.permissionlevel = req.session.permissionlevel;

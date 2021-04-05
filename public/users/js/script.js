@@ -58,33 +58,6 @@ function addLoginUI(){
    
 }
 
-function addEditBioButton(){
-   let editBio = document.getElementById('editbio');
-   editBio.setAttribute('method','POST');
-   if (editBio){
-      bioButton = document.createElement("A");
-      bioButton.textContent = 'Edit Bio';
-      bioButton.addEventListener('click',createEditForm);
-      editBio.appendChild(bioButton);   
-   }
-}
-
-function createEditForm(e){
-   e.target.remove();
-   let form = document.getElementById('editbio');
-   form.setAttribute('id','editingBio');
-   let textbox = document.createElement("TEXTAREA");
-   textbox.setAttribute('name','bioTextBox');
-   //textbox.setAttribute('type','text');
-   let submit = document.createElement("BUTTON");
-   submit.setAttribute('type','submit');
-   submit.setAttribute('name','newBio');
-   submit.setAttribute('value','true');
-   submit.textContent = 'Submit';
-   form.appendChild(textbox);
-   form.appendChild(submit);
-}
-
 /* messages are now handled by serverside js
 function popupMessage(type, content){
    let header = document.getElementsByTagName("header")[0];
@@ -455,7 +428,6 @@ function initialise() {
    enableEditor();
    collapseArticleHeaders();
    addLoginUI();
-   addEditBioButton();
 }
 
 window.addEventListener('load', initialise, false);
