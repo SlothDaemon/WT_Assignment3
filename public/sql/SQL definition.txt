@@ -1,21 +1,24 @@
 CREATE TABLE Topic(
-T_Title varchar(255) NOT NULL PRIMARY KEY,
+TID INT NOT NULL PRIMARY KEY,
+T_Title varchar(255),
 Descriptionlink varchar(255)
 );
 
 CREATE TABLE Quiz(
-Q_Title varchar(255) NOT NULL PRIMARY KEY,
-Topic varchar(255),
-FOREIGN KEY (Topic) REFERENCES Topic(T_Title)
+QID INT NOT NULL PRIMARY KEY,
+Q_Title varchar(255),
+Topic INT,
+FOREIGN KEY (Topic) REFERENCES Topic(TID)
 );
 
 CREATE TABLE Question(
-QA_Title varchar(255) NOT NULL PRIMARY KEY,
+QAID INT NOT NULL PRIMARY KEY,
+QA_Title varchar(255),
 Type varchar(255),
 Problem_Statement varchar(255),
 Answer varchar(255),
-Quiz varchar(255),
-FOREIGN KEY (Quiz) REFERENCES Quiz(Q_Title)
+Quiz INT,
+FOREIGN KEY (Quiz) REFERENCES Quiz(QID)
 );
 
 CREATE TABLE RU(
@@ -25,9 +28,9 @@ Password varchar(255) NOT NULL
 );
 
 CREATE TABLE Attempt(
-Question varchar(255),
+Question INT,
 RU varchar(255),
 Attempt varchar(255),
-FOREIGN KEY (Question) REFERENCES Question(QA_Title),
+FOREIGN KEY (Question) REFERENCES Question(QID),
 FOREIGN KEY (RU) REFERENCES RU(Login)
 );
