@@ -60,8 +60,8 @@ function addLoginUI(){
 
 function addEditBioButton(){
    let editBio = document.getElementById('editbio');
-   editBio.setAttribute('method','POST');
    if (editBio){
+      editBio.setAttribute('method','POST');
       bioButton = document.createElement("A");
       bioButton.textContent = 'Edit Bio';
       bioButton.addEventListener('click',createEditForm);
@@ -75,7 +75,6 @@ function createEditForm(e){
    form.setAttribute('id','editingBio');
    let textbox = document.createElement("TEXTAREA");
    textbox.setAttribute('name','bioTextBox');
-   //textbox.setAttribute('type','text');
    let submit = document.createElement("BUTTON");
    submit.setAttribute('type','submit');
    submit.setAttribute('name','newBio');
@@ -85,34 +84,18 @@ function createEditForm(e){
    form.appendChild(submit);
 }
 
-/* messages are now handled by serverside js
-function popupMessage(type, content){
-   let header = document.getElementsByTagName("header")[0];
-   let msg = document.createElement("ASIDE");
-   msg.classList.toggle("message");
-   msg.textContent = content;
-   switch (true){
-      case type === "warning":
-         msg.classList.toggle("message--warning");
-         break;
-      case type === "error":
-         msg.classList.toggle("message--error");
-         break;
-      case type === "ok":
-         msg.classList.toggle("message--ok");
-         break;
-      default:
-         break;
+function addMessageClosers(){
+   let messages = document.getElementsByClassName('message');
+   for (let i = 0; i<messages.length; i++){
+      let close = document.createElement("A");
+      close.textContent = "X";
+      messages[i].appendChild(close);
    }
-   let close = document.createElement("A");
-   close.textContent="X";
-   msg.appendChild(close);
-   header.appendChild(msg);
-}*/
+}
 
 function closeMessage(e){
    if (e.target && e.target.nodeName == "A"){
-      e.target.parentNode.style.display = 'none';
+      e.target.parentNode.remove();
    }
 }
 
@@ -456,6 +439,7 @@ function initialise() {
    collapseArticleHeaders();
    addLoginUI();
    addEditBioButton();
+   addMessageClosers();
 }
 
 window.addEventListener('load', initialise, false);

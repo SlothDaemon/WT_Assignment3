@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+const Joi = require('joi');
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 var profileDbFile = 'public/sql/profile.db';
@@ -8,6 +9,14 @@ var profileDbFileExists = fs.existsSync(profileDbFile);
 var profileDb = new sqlite3.Database(profileDbFile);
 
 var path = require('path');
+
+const schema = Joi.object({
+  username: Joi.string()
+    .alphanum()
+    .max(30)
+    .required(),
+});
+
 
 router.all('*', function(req,res,next){
   res.locals.user = req.session.user;
@@ -33,24 +42,33 @@ router.get('/:profile', function(req, res, next) {
   let p = req.params.profile;
   req.session.completions = req.session.completions || 0;
   
-  let query = 'SELECT rowid AS id, username, bio, completion FROM PROFILES WHERE (username="'+ p +'");';
-  profileDb.get(query, function(err,row){
-    if (err) { throw err; }
-    if (row) {
-      var profilestats = { 
-        name: row.username, 
-        completed: row.completion,
-        session: req.session.completions, 
-        bio: row.bio || ""
-      };
-      // The scope of these variables make no fucking sense to me, so I guess I'm copypasta'ing code again
-      res.render('users/profile', {title: p+"'s profile!", description: p+"'s profile! See their customized profile and progress on the questions!", total: totalquestions, profile:profilestats});
-    }
-    else {
-      var profilestats = {name: p, completed: 0, session: req.session.completions, bio: ""};
-      res.render('users/profile', {title: p+"'s profile!", description: p+"'s profile! See their customized profile and progress on the questions!", total: totalquestions, profile:profilestats});
-    }
-  });
+  const { error, value } = schema.validate({ username: p });
+
+  if (!error){
+    let query = 'SELECT rowid AS id, username, bio, completion FROM PROFILES WHERE (username="'+ p +'");';
+    profileDb.get(query, function(err,row){
+      if (err) { throw err; }
+      if (row) {
+        var profilestats = { 
+          exists: true,
+          name: row.username, 
+          completed: row.completion,
+          session: req.session.completions, 
+          bio: row.bio || ""
+        };
+        // The scope of these variables make no fucking sense to me, so I guess I'm copypasta'ing code again
+        res.render('users/profile', {title: p+"'s profile!", description: p+"'s profile! See their customized profile and progress on the questions!", total: totalquestions, profile:profilestats});
+      }
+      else {
+        var profilestats = {exists:false};
+        res.render('users/profile', {title: "User not found!", description: "User not found!", total: totalquestions, profile:profilestats});
+      }
+    });
+  }
+  else {
+    var profilestats = {exists:false};
+    res.render('users/profile', {title: "User not found!", description: "User not found!", total: totalquestions, profile:profilestats});
+  }
   
 });
 

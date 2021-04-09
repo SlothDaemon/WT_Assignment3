@@ -1,0 +1,6 @@
+-- Javascript sqlite3 automatically introduces rowid as unique id primary key
+CREATE TABLE PROFILES (
+  username TEXT NOT NULL, 
+  bio TEXT, 
+  completion INTEGER
+);

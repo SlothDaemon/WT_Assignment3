@@ -16,16 +16,12 @@ html
       - for (let i = 0; i < msgs.length; i++){
         if msgs[i][0] == 'ok'
           article.message.message--ok #{msgs[i][1]}
-            a X
         else if msgs[i][0] == 'warning'
           article.message.message--warning #{msgs[i][1]}
-            a X
         else if msgs[i][0] == 'error'
           article.message.message--error #{msgs[i][1]}
-            a X
         else
           article.message #{msgs[i][1]}
-            a X
       - }
 
     nav#nav

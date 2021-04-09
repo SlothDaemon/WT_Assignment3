@@ -115,22 +115,20 @@ login.post('*', function(req,res){
 
 
   else if (req.body.newBio) {
-    const { error, value } = bio.validate({ bioContent: req.body.bioTextBox });
-    if (error){
-      addMessage(req,'error',error.message);
-      res.redirect('back');
-    }
-    else{
-      profileDb.run('UPDATE PROFILES SET bio ="'+ req.body.bioTextBox +'" WHERE username="' + req.session.user + '";', function (error) {
-        if (error){
-          addMessage(req,'error',error.message);
-          res.redirect('back');
-          throw error;
-        }
-      });
-      addMessage(req,'ok','Bio successfully updated!');
-      res.redirect('back');
-    }
+    profileDb.run('UPDATE PROFILES SET bio = ? WHERE username=?;',[
+      req.body.bioTextBox,
+      req.session.user
+    ],function(error){
+      if (error){
+        console.log(error);
+        addMessage(req,'error',error.message);
+        res.redirect('back');
+      }
+      else {
+        addMessage(req,'ok','Bio successfully updated!');
+        res.redirect('back');
+      }
+    });
   }
 
   else {
