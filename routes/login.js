@@ -16,6 +16,7 @@ var profileDb = new sqlite3.Database(profileDbFile);
 
 var login = e.Router();
 
+// Create a verification schema using Joi to sanitize data inputs
 const schema = Joi.object({
     username: Joi.string()
       .alphanum()
@@ -27,25 +28,20 @@ const schema = Joi.object({
       .pattern(new RegExp('[a-zA-Z0-9#!@$%]'))
 });
 
-const bio = Joi.object({
-  bioContent: Joi.string()
-    .max(1024)
-    .pattern(new RegExp('[a-zA-Z0-9!,.]'))
-})
-
+// Add messages to the user with my custom flash message system
 function addMessage(req, type, message){
   req.session.messages.push([type, message]);
 }
 
 function errors(err) {
-  //Copypasta'd code from app.js, no idea how to do this better without cyclically inporting 
+  //Copypasta'd code from app.js, no idea how to do this better without cyclically inporting app.js in here
   if (err){
     // Custom error handler (custom flash message system)
     res.locals.user = req.session.user
     res.locals.msgs = req.session.messages || [];
     res.locals.msgs.push(['error', 'Error ' + err.status + ' ' + err.message]);
     
-    /* // verbose error page (too verbose for production, please comment out for end product)
+    /* // verbose error page (too verbose to be safe for production, please comment out for end product)
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     res.status(err.status || 500);
@@ -55,6 +51,7 @@ function errors(err) {
   }
 }
 
+// Initialize the admin's credentials if the login db doesn't exist yet
 loginDb.serialize(function(){
   if (!loginDbFileExists) {
     loginDb.run("CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL)");
@@ -68,6 +65,7 @@ loginDb.serialize(function(){
   }
 });
 
+// Authentication function with callback 
 function auth(name, pass, f){
   let query = 'SELECT rowid AS id, username, salt, hash, permissionlevel FROM LOGINS WHERE (username="'+name+'")';
   loginDb.get(query, function(err,row){
@@ -86,6 +84,7 @@ function auth(name, pass, f){
 Furthermore, it also catches on which page it happened */
 pages = ['/','/assessment','/bernerslee','/features','/history','/w3c'];
 login.post('*', function(req,res){
+  // If the login button was pressed
   if (req.body.login) {
     const { error, value } = schema.validate({ username: req.body.username, password: req.body.password });
     if (!error){
@@ -96,7 +95,8 @@ login.post('*', function(req,res){
       res.redirect('back');
     }
   }
-  
+
+  // If the register button was pressed
   else if (req.body.register) {
     const { error, value } = schema.validate({ username: req.body.username, password: req.body.password });
     if (!error){
@@ -108,12 +108,13 @@ login.post('*', function(req,res){
     }
   }
 
+  // If the logout button was pressed
   else if (req.body.logout) {
     req.session.destroy(errors);
     res.redirect('back');
   }
 
-
+  // If the edit bio button was pressed
   else if (req.body.newBio) {
     profileDb.run('UPDATE PROFILES SET bio = ? WHERE username=?;',[
       req.body.bioTextBox,
@@ -131,12 +132,14 @@ login.post('*', function(req,res){
     });
   }
 
+  // if some other POST request happens
   else {
     addMessage(req,'warning',"A POST request happened, but went unhandled");
     res.redirect('back');
   }
 });
 
+// Check the user's credentials using the auth function and if it exists, log them in and change session variables accordingly
 function loginUser(req, res, existingUser, existingPass){
   auth(existingUser, existingPass, function(err, user, permissionlevel){
     if (user){
@@ -153,6 +156,7 @@ function loginUser(req, res, existingUser, existingPass){
   })
 }
 
+// Check if an username exists already and if not create a login and profile
 function registerNewUser(req, res, newUser, newPass){
   let query = 'SELECT rowid AS id, username FROM LOGINS WHERE (username="'+ newUser +'");';
   loginDb.get(query, function(err,row){

@@ -1,12 +1,14 @@
 function addHandlers(){
+   
    const main = document.getElementsByTagName("main")[0];
    main.addEventListener("click", collapsibleHeaders);
    const header = document.getElementsByTagName("header")[0];
    header.addEventListener("click", closeMessage);
 }
 
+// Fill in the login UI on all pages. Just a whole bunch of arduous DOM manipulation
 function addLoginUI(){
-   // ID first determined by server session
+   // ID determined by the jade file, which in turn first checks whether the user is logged in or not
    let loginform = document.getElementById('login');
    let logoutform = document.getElementById('logout');
 
@@ -58,6 +60,7 @@ function addLoginUI(){
    
 }
 
+// DOM Manipulation to add an edit bio button when a RU looks at their own profile
 function addEditBioButton(){
    let editBio = document.getElementById('editbio');
    if (editBio){
@@ -69,6 +72,7 @@ function addEditBioButton(){
    }
 }
 
+// Create the textarea and submission button once the edit bio button is pressed
 function createEditForm(e){
    e.target.remove();
    let form = document.getElementById('editbio');
@@ -84,6 +88,7 @@ function createEditForm(e){
    form.appendChild(submit);
 }
 
+// Add the clickable X to all messages so they can be closed
 function addMessageClosers(){
    let messages = document.getElementsByClassName('message');
    for (let i = 0; i<messages.length; i++){
@@ -93,12 +98,14 @@ function addMessageClosers(){
    }
 }
 
+// Remove parent node (the message) from the page once the user dismisses them
 function closeMessage(e){
    if (e.target && e.target.nodeName == "A"){
       e.target.parentNode.remove();
    }
 }
 
+// H2 headers are collapsible in order to remove the wall-of-text effect most pages have
 function collapsibleHeaders(e) {
    if(e.target && e.target.nodeName == "H2"){
       const c = e.target.nextElementSibling;
@@ -124,6 +131,7 @@ function collapseArticleHeaders() {
    }
 }
 
+// Fill the selector part of the attribute changer UI
 function fillSelector(){
    var selector = document.getElementById('selector');
 
@@ -146,6 +154,7 @@ function fillSelector(){
    }
 }
 
+// Initiate recursively walking through the DOM to append the desired elements to the attribute changer
 function domWalk (whitelist, mainElements, sections) {
    for (let elem of document.getElementsByTagName("html")[0].childNodes){
       if (elem.nodeType == 1){
@@ -154,6 +163,8 @@ function domWalk (whitelist, mainElements, sections) {
    }
 }
 
+// Recursively check if the node inspecting is on the whitelist.
+// If yes, recursively look at all its child nodes and add the node to the attribute changer
 function recursiveDomWalk(elem, whitelist, mainElements, sections) {
    if (elem.nodeType == 1 && whitelist.includes(elem.nodeName)){
       if (elem.id !== "main-section" && elem.nodeName === "SECTION") {
@@ -168,11 +179,13 @@ function recursiveDomWalk(elem, whitelist, mainElements, sections) {
    }
 }
 
+// Make attribute changer editor form functinal
 function enableEditor(){
    var editor = document.getElementById('editor');
    editor.addEventListener('change',changeSelected, false);
 }
 
+// Fill in the editor with the options in the array
 function fillEditor(){
    var editor = document.getElementById('editor');
    var fontSizeOptions = ["25%","50%","75%","100%","125%","150%","175%","200%"];
@@ -194,6 +207,7 @@ function fillEditor(){
    addArrayElements(editor, colorOptions, "Background");
 }
 
+// For each element in the array, do all the DOM manipulation to add it to the dropdown
 function addArrayElements(editor, array, category) {
    for (let i = 0; i < array.length; i++){
       var option = array[i];
@@ -205,6 +219,7 @@ function addArrayElements(editor, array, category) {
    }
 }
 
+// Change the selected attribute with the chosen options
 function changeSelected(){
    var selector = document.getElementById('selector');
    var selectedOption = selector.options[selector.selectedIndex];
@@ -224,6 +239,7 @@ function changeSelected(){
    }
 }
 
+// If an answer to an MC question is selected, change the div's style accordingly
 function evaluateMCAnswer(e){
    if(e.target && e.target.nodeName == "INPUT" && e.target.type === 'radio' && e.target.value==='false'){
       e.target.parentNode.parentNode.style.color = "red";
@@ -233,6 +249,8 @@ function evaluateMCAnswer(e){
    }
 }
 
+// Check if all the inputs, in lowercase, correspond with the correct answers
+// If all answers are true, change the div style accordingly
 function evaluateFillAnswer(e){
    let article = document.getElementById('question'+e.target.id);
    let givenAnswers = article.getElementsByTagName("INPUT");
@@ -249,6 +267,7 @@ function evaluateFillAnswer(e){
    }
 }
 
+// Fill the assessment page with questions
 function fillAssessment(){
    if (document.title === "Assessment"){
       let questions = multiQuestions().concat(fillQuestions());
@@ -259,6 +278,7 @@ function fillAssessment(){
    }}
 }
 
+// Add the editor and selector attribute changer UI to the footer of each page
 function addSelectors(){
    let footer = document.getElementById("footer")
    for (let i = 0; i<2; i++){
@@ -283,6 +303,7 @@ function addSelectors(){
    }
 }
 
+// Shuffle an array
 Array.prototype.shuffle = function() {
    // Fisher-Yates shuffle
    for (let i = this.length - 1; i; i--){
@@ -293,11 +314,13 @@ Array.prototype.shuffle = function() {
    }
 };
 
+// Question superclass
 class Question {
    constructor(desc) {
       this.description = desc;
    }
 
+   // DOM manipulation to create the article for the question to be appended dto
    createBaseArticle(nr){
       let article = document.createElement("ARTICLE");
       article.setAttribute('id','question'+nr);
@@ -316,6 +339,7 @@ class MultipleChoice extends Question {
       this.answers = answ;
    }
 
+   // DOM manipulation fill in the rest of the article
    createArticle(nr){
       let article = super.createBaseArticle(nr);
    
@@ -328,6 +352,7 @@ class MultipleChoice extends Question {
       return article;
    }
    
+   // DOM manipulation to create the rest of the question
    createAnswers(form, nr){
       for (let i=0; i<this.answers.length; i++){
          var input = document.createElement("INPUT");
@@ -361,6 +386,7 @@ class FillIn extends Question {
       this.answers = answ;
    }
 
+   // DOM manipulation fill in the rest of the article
    createArticle(nr){
       let article = super.createBaseArticle(nr);
    
@@ -385,6 +411,7 @@ class FillIn extends Question {
       return article;
    }
 
+   // DOM manipulation to create the rest of the question
    createAnswer(form, i, nr){
       let input = document.createElement("INPUT");
       input.setAttribute('type','text');
@@ -398,6 +425,7 @@ class FillIn extends Question {
    }
 }
 
+// Create the MC questions
 function multiQuestions(){
    let a11 = new MultipleChoiceAnswer("Tim Berners-Lee",true);
    let a12 = new MultipleChoiceAnswer("Sergey Sosnovsky",false);
@@ -422,13 +450,14 @@ function multiQuestions(){
    return [q1,q2,q3];
 }
 
+// Create the fill in questions
 function fillQuestions(){
    let q1 = new FillIn("The four levels of maturity for a W3C process are working draft, candidate recommendation, # and W3C recommendation.",["proposed recommendation"]);
    let q2 = new FillIn("Tim Berners-Lee was born in # and his online nickname is #.",["1995", "TimBL"]);
    return [q1,q2];
 }
 
-
+// Run the list of DOM manipulation functions once the window has loaded
 function initialise() {
    addSelectors();
    fillAssessment();
@@ -442,4 +471,5 @@ function initialise() {
    addMessageClosers();
 }
 
+// Do all the DOM manipulation once the window has loaded
 window.addEventListener('load', initialise, false);

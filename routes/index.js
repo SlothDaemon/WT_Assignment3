@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+// For pages in pages, catch the session's user, permission level and messages (if any) for use in the dynamic sites.
 pages = ['/','/index','/assessment','/bernerslee','/features','/history','/w3c']
 router.all(pages, function(req,res,next){
   res.locals.user = req.session.user;
@@ -10,7 +11,7 @@ router.all(pages, function(req,res,next){
   next();
 });
 
-/* GET home page. */
+// GET page, set title and description for each
 router.get(['/', '/index','/index.html'], function(req, res, next) {
   res.render('index', { title: 'Advances in HTML5 Technology', description: "This website is all about HTML5, its new features, its rich history and more!"});
 });

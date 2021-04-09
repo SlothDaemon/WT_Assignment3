@@ -10,6 +10,7 @@ var profileDb = new sqlite3.Database(profileDbFile);
 
 var path = require('path');
 
+// Create a verification schema using Joi to sanitize data inputs
 const schema = Joi.object({
   username: Joi.string()
     .alphanum()
@@ -17,7 +18,7 @@ const schema = Joi.object({
     .required(),
 });
 
-
+// Catch the session's user, permission level and messages (if any) for use in the dynamic sites.
 router.all('*', function(req,res,next){
   res.locals.user = req.session.user;
   res.locals.permissionlevel = req.session.permissionlevel;
@@ -26,6 +27,7 @@ router.all('*', function(req,res,next){
   next();
 });
 
+// Initialize the admin's profile if the profile db doesn't exist yet
 profileDb.serialize(function(){
   if (!profileDbFileExists){
     console.log('making admins profile');
@@ -36,9 +38,9 @@ profileDb.serialize(function(){
   }
 });
 
-/* GET users listing. */
+// Read which user's profile is requested and access their info from the profile database
 router.get('/:profile', function(req, res, next) {
-  let totalquestions = 12; // get this out of the questions database
+  let totalquestions = 12; // todo: get this out of the questions database eventually
   let p = req.params.profile;
   req.session.completions = req.session.completions || 0;
   
@@ -48,6 +50,7 @@ router.get('/:profile', function(req, res, next) {
     let query = 'SELECT rowid AS id, username, bio, completion FROM PROFILES WHERE (username="'+ p +'");';
     profileDb.get(query, function(err,row){
       if (err) { throw err; }
+      // If user was found, retrieve their data from the profile db
       if (row) {
         var profilestats = { 
           exists: true,
@@ -56,20 +59,20 @@ router.get('/:profile', function(req, res, next) {
           session: req.session.completions, 
           bio: row.bio || ""
         };
-        // The scope of these variables make no fucking sense to me, so I guess I'm copypasta'ing code again
         res.render('users/profile', {title: p+"'s profile!", description: p+"'s profile! See their customized profile and progress on the questions!", total: totalquestions, profile:profilestats});
       }
+      // If no user was found
       else {
         var profilestats = {exists:false};
         res.render('users/profile', {title: "User not found!", description: "User not found!", total: totalquestions, profile:profilestats});
       }
     });
   }
+  // If requested username is non alphanumeric or otherwise failed Joi sanitation verification
   else {
     var profilestats = {exists:false};
     res.render('users/profile', {title: "User not found!", description: "User not found!", total: totalquestions, profile:profilestats});
   }
-  
 });
 
 module.exports = router;

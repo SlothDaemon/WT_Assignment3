@@ -22,6 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, './public')));
 
+// Keep up a temporary session with user (non-persistent)
 app.use(session({
   secret: 'html565e232ed43477b2f5r1r463r1f86f14386tr4365tr143q65fcb4413023548fcehtml5',
   resave: false,
@@ -33,9 +34,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 
-/* Catches ALL POST requests. Currently, only POST request is the login file. 
+/* Catches ALL POST requests. Currently, only POST requests are the logins and bio updates. 
 Furthermore, it also catches on which page it happened */
-pages = ['/','/assessment','/bernerslee','/features','/history','/w3c'];
 app.post('*', loginRouter);
 
 // catch 404 and forward to error handler
@@ -55,8 +55,8 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
   res.locals.title = "Error " + err.status;
-  res.render('error');
-  //res.redirect('back');
+  //res.render('error');
+  res.redirect('back');
 });
 
 module.exports = app;
