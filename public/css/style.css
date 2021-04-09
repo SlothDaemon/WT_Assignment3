@@ -1,8 +1,7 @@
+/* Yeah. this is the CSS file for the whole site. Everything is styled here. Predictable, right? */
 body {
     background-color: rgb(110, 134, 150);
     color: rgb(50, 50, 50);
-    /* background-image: url("../img/bg.jpg"); 
-    background-size: cover; */
     font-family: 'Open Sans', sans-serif;
 }
 
@@ -31,12 +30,12 @@ h2{
 h2::before{
     color:rgb(175, 175, 175);
     font-size:0.66em;
-    content:'\1431'; /* '\005E' '\25bc' */
+    content:'\1431';
     margin-right: .33em;
 }
 
 .collapsed::before{
-    content:'\142F'; /* '\02C5' '\27a4' */
+    content:'\142F';
 }
 
 li {
