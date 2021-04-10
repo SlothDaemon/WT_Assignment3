@@ -239,6 +239,7 @@ function changeSelected(){
    }
 }
 
+/*
 // If an answer to an MC question is selected, change the div's style accordingly
 function evaluateMCAnswer(e){
    if(e.target && e.target.nodeName == "INPUT" && e.target.type === 'radio' && e.target.value==='false'){
@@ -277,6 +278,7 @@ function fillAssessment(){
          mainSection.appendChild(questions[nr].createArticle(nr));
    }}
 }
+*/
 
 // Add the editor and selector attribute changer UI to the footer of each page
 function addSelectors(){
@@ -314,6 +316,7 @@ Array.prototype.shuffle = function() {
    }
 };
 
+/*
 // Question superclass
 class Question {
    constructor(desc) {
@@ -456,11 +459,12 @@ function fillQuestions(){
    let q2 = new FillIn("Tim Berners-Lee was born in # and his online nickname is #.",["1995", "TimBL"]);
    return [q1,q2];
 }
+*/
 
 // Run the list of DOM manipulation functions once the window has loaded
 function initialise() {
    addSelectors();
-   fillAssessment();
+   //fillAssessment();
    addHandlers();
    fillSelector();
    fillEditor();
