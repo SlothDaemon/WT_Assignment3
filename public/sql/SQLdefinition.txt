@@ -21,10 +21,17 @@ Quiz INT,
 FOREIGN KEY (Quiz) REFERENCES Quiz(QID)
 );
 
-CREATE TABLE RU(
-Name varchar(255),
-Login varchar(255) NOT NULL PRIMARY KEY,
-Password varchar(255) NOT NULL
+CREATE TABLE PROFILES (
+username TEXT NOT NULL, 
+bio TEXT, 
+completion INTEGER
+);
+
+CREATE TABLE LOGINS (
+username TEXT NOT NULL, 
+salt HASHBYTES NOT NULL, 
+hash HASHBYTES NOT NULL, 
+permissionlevel INTEGER NOT NULL
 );
 
 CREATE TABLE Attempt(

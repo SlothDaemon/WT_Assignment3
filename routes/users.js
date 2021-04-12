@@ -4,9 +4,10 @@ var router = express.Router();
 const Joi = require('joi');
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
-var profileDbFile = 'public/sql/profile.db';
-var profileDbFileExists = fs.existsSync(profileDbFile);
-var profileDb = new sqlite3.Database(profileDbFile);
+var dbFile = 'public/sql/html5.db';
+var dbFileExists = fs.existsSync(dbFile);
+var db = new sqlite3.Database(dbFile);
+const dbDef = fs.readFileSync('public/sql/SQLdefinition.txt').toString();
 
 var path = require('path');
 
@@ -27,14 +28,20 @@ router.all('*', function(req,res,next){
   next();
 });
 
-// Initialize the admin's profile if the profile db doesn't exist yet
-profileDb.serialize(function(){
-  if (!profileDbFileExists){
-    console.log('making admins profile');
-    profileDb.run("CREATE TABLE PROFILES (username TEXT NOT NULL, bio TEXT, completion INTEGER);");
-    var stmt = profileDb.prepare('INSERT INTO PROFILES VALUES (?,?,?)');
-    stmt.run('admin',"Hi, I'm admin!",12);
-    stmt.finalize();
+// Initialize the admin's credentials and profile if the db doesn't exist yet
+db.serialize(function(){
+  if (!dbFileExists) {
+    db.run(dbDef);
+    var stmt = db.prepare('INSERT INTO LOGINS VALUES (?,?,?,?)');
+    hasher({password: 'opensesame'}, function(err, pass, salt, hash){
+      if (err)  throw err; 
+      stmt.run('admin', salt, hash, 3);
+      stmt.finalize();
+    });
+    var stmt2 = db.prepare('INSERT INTO PROFILES VALUES (?,?,?)');
+    stmt2.run('admin',"Hi, I'm admin!",12);
+    stmt2.finalize();
+    console.log('added admin to db');
   }
 });
 
@@ -48,7 +55,7 @@ router.get('/:profile', function(req, res, next) {
 
   if (!error){
     let query = 'SELECT rowid AS id, username, bio, completion FROM PROFILES WHERE (username="'+ p +'");';
-    profileDb.get(query, function(err,row){
+    db.get(query, function(err,row){
       if (err) { throw err; }
       // If user was found, retrieve their data from the profile db
       if (row) {

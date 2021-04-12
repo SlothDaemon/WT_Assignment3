@@ -5,14 +5,12 @@ var hash = require('pbkdf2-password');
 var hasher = hash();
 
 var fs = require('fs');
-var loginDbFile = 'public/sql/login.db';
-var loginDbFileExists = fs.existsSync(loginDbFile);
+var dbFile = 'public/sql/html5.db';
+var dbFileExists = fs.existsSync(dbFile);
 var sqlite3 = require('sqlite3').verbose();
-var loginDb = new sqlite3.Database(loginDbFile);
+var db = new sqlite3.Database(dbFile);
 
-var profileDbFile = 'public/sql/profile.db';
-var profileDbFileExists = fs.existsSync(profileDbFile);
-var profileDb = new sqlite3.Database(profileDbFile);
+const dbDef = fs.readFileSync('public/sql/SQLdefinition.txt').toString();
 
 var login = e.Router();
 
@@ -51,24 +49,27 @@ function errors(err) {
   }
 }
 
-// Initialize the admin's credentials if the login db doesn't exist yet
-loginDb.serialize(function(){
-  if (!loginDbFileExists) {
-    loginDb.run("CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL)");
-    var stmt = loginDb.prepare('INSERT INTO LOGINS VALUES (?,?,?,?)');
+// Initialize the admin's credentials and profile if the db doesn't exist yet
+db.serialize(function(){
+  if (!dbFileExists) {
+    db.run(dbDef);
+    var stmt = db.prepare('INSERT INTO LOGINS VALUES (?,?,?,?)');
     hasher({password: 'opensesame'}, function(err, pass, salt, hash){
       if (err)  throw err; 
       stmt.run('admin', salt, hash, 3);
       stmt.finalize();
     });
-    console.log('added admin to loginDb');
+    var stmt2 = db.prepare('INSERT INTO PROFILES VALUES (?,?,?)');
+    stmt2.run('admin',"Hi, I'm admin!",12);
+    stmt2.finalize();
+    console.log('added admin to db');
   }
 });
 
 // Authentication function with callback 
 function auth(name, pass, f){
   let query = 'SELECT rowid AS id, username, salt, hash, permissionlevel FROM LOGINS WHERE (username="'+name+'")';
-  loginDb.get(query, function(err,row){
+  db.get(query, function(err,row){
     if (!row) return f(new Error('User not found'));
     else {
       hasher({password: pass, salt: row.salt}, function(error, passw, salt, hash){
@@ -159,14 +160,14 @@ function loginUser(req, res, existingUser, existingPass){
 // Check if an username exists already and if not create a login and profile
 function registerNewUser(req, res, newUser, newPass){
   let query = 'SELECT rowid AS id, username FROM LOGINS WHERE (username="'+ newUser +'");';
-  loginDb.get(query, function(err,row){
+  db.get(query, function(err,row){
     if (row) {
       addMessage(req,'error','Username ' + newUser + ' already taken.');
       res.redirect('back');
     }
     else {
-      loginDb.serialize(function(){
-        var stmt = loginDb.prepare('INSERT INTO LOGINS VALUES (?,?,?,?)');
+      db.serialize(function(){
+        var stmt = db.prepare('INSERT INTO LOGINS VALUES (?,?,?,?)');
         hasher({password: newPass}, function(err, pass, salt, hash){
           if (err) throw err; 
           stmt.run(newUser, salt, hash, 1);
@@ -175,8 +176,8 @@ function registerNewUser(req, res, newUser, newPass){
         console.log('added regular user ' + newUser + ' to loginDb');
       });
 
-      profileDb.serialize(function(){
-        var stmt = profileDb.prepare('INSERT INTO PROFILES VALUES (?,?,?)');
+      db.serialize(function(){
+        var stmt = db.prepare('INSERT INTO PROFILES VALUES (?,?,?)');
         stmt.run(newUser,"",0);
         stmt.finalize();
       })
