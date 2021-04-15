@@ -10,7 +10,7 @@ var dbFileExists = fs.existsSync(dbFile);
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(dbFile);
 
-const dbDef = fs.readFileSync('public/sql/SQLdefinition.txt').toString();
+const dbDef = 'CREATE TABLE Topic(TID INT NOT NULL PRIMARY KEY, T_Title varchar(255), Descriptionlink varchar(255)); CREATE TABLE Quiz(QID INT NOT NULL PRIMARY KEY, Q_Title varchar(255), Topic INT, FOREIGN KEY (Topic) REFERENCES Topic(TID)); CREATE TABLE Question(QAID INT NOT NULL PRIMARY KEY, QA_Title varchar(255), Type varchar(255), Problem_Statement varchar(255), Answer varchar(255), Quiz INT, FOREIGN KEY (Quiz) REFERENCES Quiz(QID)); CREATE TABLE PROFILES (username TEXT NOT NULL, bio TEXT, completion INTEGER); CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL); CREATE TABLE Attempt(Question INT, RU varchar(255), Attempt varchar(255), FOREIGN KEY (Question) REFERENCES Question(QID), FOREIGN KEY (RU) REFERENCES RU(Login));'
 
 var login = e.Router();
 
@@ -173,13 +173,14 @@ function registerNewUser(req, res, newUser, newPass){
           stmt.run(newUser, salt, hash, 1);
           stmt.finalize();
         });
-        console.log('added regular user ' + newUser + ' to loginDb');
+        console.log('added regular user ' + newUser + ' to html5.db');
       });
 
       db.serialize(function(){
         var stmt = db.prepare('INSERT INTO PROFILES VALUES (?,?,?)');
         stmt.run(newUser,"",0);
         stmt.finalize();
+        console.log('added ' + newUser + 's profile to html5.db');
       })
 
       addMessage(req,'ok',"Registered successfully! Please log in.");

@@ -1,7 +1,0 @@
--- Javascript sqlite3 automatically introduces rowid as unique id primary key
-CREATE TABLE LOGINS (
-  username TEXT NOT NULL, 
-  salt HASHBYTES NOT NULL, 
-  hash HASHBYTES NOT NULL, 
-  permissionlevel INTEGER NOT NULL
-);

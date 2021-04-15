@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var hash = require('pbkdf2-password');
+var hasher = hash();
 
 const Joi = require('joi');
 var fs = require('fs');
@@ -7,8 +9,7 @@ var sqlite3 = require('sqlite3').verbose();
 var dbFile = 'public/sql/html5.db';
 var dbFileExists = fs.existsSync(dbFile);
 var db = new sqlite3.Database(dbFile);
-const dbDef = fs.readFileSync('public/sql/SQLdefinition.txt').toString();
-
+const dbDef = 'CREATE TABLE Topic(TID INT NOT NULL PRIMARY KEY, T_Title varchar(255), Descriptionlink varchar(255)); CREATE TABLE Quiz(QID INT NOT NULL PRIMARY KEY, Q_Title varchar(255), Topic INT, FOREIGN KEY (Topic) REFERENCES Topic(TID)); CREATE TABLE Question(QAID INT NOT NULL PRIMARY KEY, QA_Title varchar(255), Type varchar(255), Problem_Statement varchar(255), Answer varchar(255), Quiz INT, FOREIGN KEY (Quiz) REFERENCES Quiz(QID)); CREATE TABLE PROFILES (username TEXT NOT NULL, bio TEXT, completion INTEGER); CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL); CREATE TABLE Attempt(Question INT, RU varchar(255), Attempt varchar(255), FOREIGN KEY (Question) REFERENCES Question(QID), FOREIGN KEY (RU) REFERENCES RU(Login));'
 var path = require('path');
 
 // Create a verification schema using Joi to sanitize data inputs
