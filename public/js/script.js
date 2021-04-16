@@ -212,7 +212,7 @@ function addArrayElements(editor, array, category) {
    for (let i = 0; i < array.length; i++){
       var option = array[i];
       var toAdd = document.createElement("option");
-      toAdd.textContent = option[0].toUpperCase() + option.substr(1);
+      toAdd.textContent = option.toUpperCase() + option.substr(1);
       toAdd.value = option;
       toAdd.category = category;
       editor.add(toAdd);
@@ -267,18 +267,33 @@ function evaluateFillAnswer(e){
       e.target.parentNode.parentNode.style.color ="red";
    }
 }
+*/
 
 // Fill the assessment page with questions
 function fillAssessment(){
-   if (document.title === "Assessment"){
-      let questions = multiQuestions().concat(fillQuestions());
-      questions.shuffle();
-      let mainSection = document.getElementById("main-section");
-      for (let nr=0; nr<questions.length; nr++) {
-         mainSection.appendChild(questions[nr].createArticle(nr));
-   }}
+   let mainsection = document.getElementById("main-section");
+   let article = document.createElement('ARTICLE');
+   let h1 = document.createElement('h1');
+   h1.textContent = "niks";
+   
+   $.ajax({
+      type: 'GET',
+      url: 'http://localhost:3000/load',
+      contentType: 'json',
+      async: true,
+      encode: true
+   }).done(function(data){
+         //data = JSON.parse(data);
+         h1.textContent = data.name;
+         console.log(data);
+   }).fail(function(jqXHR, textStatus, err){
+         console.log('AJAX error response:', textStatus);
+   })
+   article.appendChild(h1);
+   mainsection.appendChild(article);
 }
-*/
+
+
 
 // Add the editor and selector attribute changer UI to the footer of each page
 function addSelectors(){
@@ -464,7 +479,6 @@ function fillQuestions(){
 // Run the list of DOM manipulation functions once the window has loaded
 function initialise() {
    addSelectors();
-   //fillAssessment();
    addHandlers();
    fillSelector();
    fillEditor();
@@ -473,6 +487,10 @@ function initialise() {
    addLoginUI();
    addEditBioButton();
    addMessageClosers();
+   if (document.title === "Assessment"){
+      fillAssessment();
+   }
+
 }
 
 // Do all the DOM manipulation once the window has loaded

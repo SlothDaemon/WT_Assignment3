@@ -7,6 +7,8 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
+var assessmentRouter = require('./routes/assessment');
+
 const e = require('express');
 const session = require('express-session');
 
@@ -32,7 +34,7 @@ app.use(session({
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
+app.use('/load', assessmentRouter);
 
 /* Catches ALL POST requests. Currently, only POST requests are the logins and bio updates. 
 Furthermore, it also catches on which page it happened */
@@ -58,5 +60,6 @@ app.use(function(err, req, res, next) {
   //res.render('error');
   res.redirect('back');
 });
+
 
 module.exports = app;

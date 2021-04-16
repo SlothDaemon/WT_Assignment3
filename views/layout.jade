@@ -10,7 +10,8 @@ html
     link(rel='icon', type='image/png', href='http://localhost:3000/img/html5.png')
     link(rel='preconnect', href='https://fonts.gstatic.com')
     link(href='https://fonts.googleapis.com/css2?family=Roboto&display=swap', rel='stylesheet')
-    script(src='http://localhost:3000/js/script.js')
+    block scripts
+      script(src='http://localhost:3000/js/script.js')
     title #{title}
   body#body
   main#grid
