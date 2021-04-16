@@ -9,8 +9,12 @@ var db = new sqlite3.Database(dbFile);
 var path = require('path');
 
 router.get('/load', function(req, res){
-    console.log("Data send to assessment");
-    var data = '{ "name":"John", "age":30, "city":"New York"}';
+    console.log("Data send from assessment");
+    var data = { 
+        name:'John', 
+        age:30,
+        city:'New York'
+    };
     res.send(data);
 })
 

@@ -279,13 +279,10 @@ function fillAssessment(){
    $.ajax({
       type: 'GET',
       url: 'http://localhost:3000/load',
-      contentType: 'json',
-      async: true,
-      encode: true
+      dataType: 'json',
    }).done(function(data){
-         //data = JSON.parse(data);
          h1.textContent = data.name;
-         console.log(data);
+         console.log(data.name);
    }).fail(function(jqXHR, textStatus, err){
          console.log('AJAX error response:', textStatus);
    })

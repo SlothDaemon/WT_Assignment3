@@ -36,4 +36,13 @@ router.get(['/w3', '/w3c','/w3c.html'], function(req, res, next) {
   res.render('w3c', { title: "W3C", description: 'A description of the World Wide Web Consortium (W3C) founded by Tim Berners-Lee.' });
 });
 
+router.get('/load', function(req, res){
+  console.log("Data send from index");
+  var data = { 
+      name:'John', 
+      age:30,
+      city:'New York'
+  };
+  res.send(data);
+})
 module.exports = router;

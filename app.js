@@ -34,7 +34,9 @@ app.use(session({
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/load', assessmentRouter);
+//app.use('/load', assessmentRouter);
+
+
 
 /* Catches ALL POST requests. Currently, only POST requests are the logins and bio updates. 
 Furthermore, it also catches on which page it happened */
