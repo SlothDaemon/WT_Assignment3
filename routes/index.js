@@ -37,12 +37,25 @@ router.get(['/w3', '/w3c','/w3c.html'], function(req, res, next) {
 });
 
 router.get('/load', function(req, res){
-  console.log("Data send from index");
-  var data = { 
-      name:'John', 
-      age:30,
-      city:'New York'
-  };
-  res.send(data);
+  if (req.session.user == null){
+    console.log("No login");
+    var data = { 
+        name:'John', 
+        age:30,
+        city:'New York'
+    };
+    res.send(data);
+  }
+  else{
+    console.log("User: " + req.session.user);
+    var data = { 
+        name: req.session.user, 
+        age:30,
+        city:'England'
+    };
+    console.log(req.session.user);
+    res.send(data);
+  }
+  
 })
 module.exports = router;

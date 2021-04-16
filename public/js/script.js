@@ -270,7 +270,7 @@ function evaluateFillAnswer(e){
 */
 
 // Fill the assessment page with questions
-function fillAssessment(){
+function loadAssessment(){
    let mainsection = document.getElementById("main-section");
    let article = document.createElement('ARTICLE');
    let h1 = document.createElement('h1');
@@ -485,7 +485,7 @@ function initialise() {
    addEditBioButton();
    addMessageClosers();
    if (document.title === "Assessment"){
-      fillAssessment();
+      loadAssessment();
    }
 
 }

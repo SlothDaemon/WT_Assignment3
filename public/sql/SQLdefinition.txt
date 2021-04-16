@@ -24,7 +24,9 @@ FOREIGN KEY (Quiz) REFERENCES Quiz(QID)
 CREATE TABLE PROFILES (
 username TEXT NOT NULL, 
 bio TEXT, 
-completion INTEGER
+completion INTEGER,
+question INT,
+FOREIGN KEY (question) REFERENCES Question(QAID)
 );
 
 CREATE TABLE LOGINS (
