@@ -43,3 +43,12 @@ CREATE TABLE Attempt(
   FOREIGN KEY (Question) REFERENCES Question(QID),
   FOREIGN KEY (RU) REFERENCES RU(Login)
 );
+
+CREATE TABLE MultipleChoice(
+  question INT NOT NULL,
+  option1 varchar(255),
+  option2 varchar(255),
+  option3 varchar(255),
+  option4 varchar(255),
+  FOREIGN KEY (question) REFERENCES Question(QAID)
+);

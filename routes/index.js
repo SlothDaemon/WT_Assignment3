@@ -37,7 +37,7 @@ router.get(['/w3', '/w3c','/w3c.html'], function(req, res, next) {
   res.render('w3c', { title: "W3C", description: 'A description of the World Wide Web Consortium (W3C) founded by Tim Berners-Lee.' });
 });
 
-// AJAX GET requests for Assessment page
+// AJAX GET request for Assessment page load
 router.get('/load', function(req, res){
   if (req.session.user == null){
     loadNoLogin(req,res);
@@ -45,5 +45,20 @@ router.get('/load', function(req, res){
   else{
     loadWithUser(req,res);
   }
-})
+});
+
+router.get('/click', function(req,res){
+  if(req.query.type == 'topic'){
+    topicClicked(req,res);
+  }
+  else if(req.query.type == 'quiz'){
+    quizClicked(req,res);
+  }
+  else if(req.query.type == 'question'){
+    questionClicked(req,res);
+  }
+  else if(req.query.type == 'home'){
+    homeClicked(req,res);
+  }
+});
 module.exports = router;

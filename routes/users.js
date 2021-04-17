@@ -15,7 +15,8 @@ const dbDef = ['CREATE TABLE Topic(TID INT NOT NULL PRIMARY KEY,T_Title varchar(
                'CREATE TABLE Question(QAID INT NOT NULL PRIMARY KEY,QA_Title varchar(255),Type varchar(255),Problem_Statement varchar(255),Answer varchar(255),Quiz INT,FOREIGN KEY (Quiz) REFERENCES Quiz(QID));',
                'CREATE TABLE PROFILES (username TEXT NOT NULL, bio TEXT, completion INTEGER,question INT,FOREIGN KEY (question) REFERENCES Question(QAID));',
                'CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL);',
-               'CREATE TABLE Attempt(Question INT,RU varchar(255),Attempt varchar(255),FOREIGN KEY (Question) REFERENCES Question(QID),FOREIGN KEY (RU) REFERENCES RU(Login));']
+               'CREATE TABLE Attempt(Question INT,RU varchar(255),Attempt varchar(255),FOREIGN KEY (Question) REFERENCES Question(QID),FOREIGN KEY (RU) REFERENCES RU(Login));',
+               'CREATE TABLE MultipleChoice(question INT NOT NULL,option1 varchar(255),option2 varchar(255),option3 varchar(255),option4 varchar(255),FOREIGN KEY (question) REFERENCES Question(QAID))']
 
 
 // Create a verification schema using Joi to sanitize data inputs

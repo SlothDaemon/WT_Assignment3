@@ -280,9 +280,22 @@ function loadAssessment(){
    }).done(function(data){
          console.log("data succesfully sent");
          if(data.pageType == 'topics'){ createTopicsPage(data.topicOne, data.DLOne, data.topicTwo, data.DLTwo);}
-         //if(data.pageType == 'quizes'){ createQuizesPage(data.quizOne, da)}
-         //if(data.pageType == 'questions'){ createQuestionsPage(data.questionOne, )}
          //if(data.pageType == 'question'){ createQuestionPage(data.)}
+   }).fail(function(jqXHR, textStatus, err){
+         console.log('AJAX error response:', textStatus);
+   })
+}
+
+// When user goes back from a quizes page, go to topics page
+function clickedHome(){
+   $.ajax({
+      type: 'GET',
+      url: 'http://localhost:3000/click',
+      dataType: 'json',
+      data: {type: 'home'}
+   }).done(function(data){
+         console.log("data succesfully sent");
+         if(data.pageType == 'topics'){ createTopicsPage(data.topicOne, data.DLOne, data.topicTwo, data.DLTwo);}
    }).fail(function(jqXHR, textStatus, err){
          console.log('AJAX error response:', textStatus);
    })
@@ -292,43 +305,110 @@ function loadAssessment(){
 function createTopicsPage(topicOne, DLOne, topicTwo, DLTwo)
 {
    let mainsection = document.getElementById("main-section");
+   while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
+   mainsection.style.display = 'block';
    let h1 = document.createElement('h1');
+   h1.textContent = 'Topics';
+   h1.style.textAlign = 'center';
+   mainsection.appendChild(h1);
    let topic1 = createTopicPageArticle(topicOne, DLOne);
    let topic2 = createTopicPageArticle(topicTwo, DLTwo);
-   h1.textContent = "Topics";
-   mainsection.appendChild(h1);
+   topic1.addEventListener('mouseover', function(){topic1.style.backgroundColor = 'orangered'; topic1.style.color = 'white'});
+   topic1.addEventListener('mouseout', function(){topic1.style.backgroundColor = 'white'; topic1.style.color = 'black'});
+   topic2.addEventListener('mouseover', function(){topic2.style.backgroundColor = 'orangered'; topic2.style.color = 'white'});
+   topic2.addEventListener('mouseout', function(){topic2.style.backgroundColor = 'white'; topic2.style.color = 'black'});
    mainsection.appendChild(topic1);
    mainsection.appendChild(topic2);
-   topic1.addEventListener('click', function(){clickedTopic(topicOne);})
-   topic2.addEventListener('click', function(){clickedTopic(topicTwo);})
+   topic1.addEventListener('click', function(){clickedTopic(topicOne);});
+   topic2.addEventListener('click', function(){clickedTopic(topicTwo);});
    console.log("Topics page created");
 }
 
 // Creates the article for a topic
 function createTopicPageArticle(header, link){
    article = document.createElement('ARTICLE');
-   let h2 = document.createElement('h2');
-   let text = document.createElement('p');
+   let h1 = document.createElement('h1');
+   let text = document.createTextNode("Click here for the topic description");
    let a = document.createElement('a');
-   h2.textContent = header;
-   text.InnerText = "Click here for the topic description";
-   a.title = text.InnerText;
+   h1.textContent = header;
+   h1.style.fontSize = '1.5em';
+   a.title = "Click here for the topic description";
    a.href = link;
-   article.className = "assessmentArticle";
-   h2.className = "assessmentHeader";
-   text.className = "topiclink";
-   text.appendChild(a);
-   article.appendChild(h2);
-   article.appendChild(text);
-   console.log("Topic article created");
+   a.appendChild(text);
+   article.appendChild(h1);
+   article.appendChild(a);
    return article;
 }
 
 // When a topic is clicked, go to it's quizes page with ajax request
 function clickedTopic(Title){
-   console.log("Topic clicked");
+   $.ajax({
+      type: 'GET',
+      url: 'http://localhost:3000/click',
+      dataType: 'json',
+      data: {
+         type: 'topic',
+         topic : Title
+      }
+   }).done(function(data){
+      console.log("Quizes info recieved");
+      if(data.pageType == 'quizes'){createQuizesPage(data.quizOne, data.quizOneQuestions, data.quizTwo, data.quizTwoQuestions)}
+
+   }).fail(function(jqXHR, textStatus, err){
+      console.log('AJAX error response:', textStatus);
+   })
 }
 
+// Lets user choose between the quizes
+function createQuizesPage(quizOne, q1Questions, quizTwo, q2Questions){
+   let mainsection = document.getElementById("main-section");
+   while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
+   mainsection.style.display = 'block';
+   let h1 = document.createElement('h1');
+   h1.textContent = 'Quizes';
+   h1.style.textAlign = 'center';
+   mainsection.appendChild(h1);
+   let quiz1 = createQuizesPageArticle(quizOne, q1Questions);
+   let quiz2 = createQuizesPageArticle(quizTwo, q2Questions);
+   mainsection.appendChild(quiz1);
+   mainsection.appendChild(quiz2);
+   let goBack = document.createElement('article');
+   let p = document.createElement('p');
+   let text = document.createTextNode('Go back to Topics');
+   p.appendChild(text);
+   goBack.appendChild(p);
+   mainsection.appendChild(goBack);
+
+   quiz1.addEventListener('mouseover', function(){quiz1.style.backgroundColor = 'orangered'; quiz1.style.color = 'white'});
+   quiz1.addEventListener('mouseout', function(){quiz1.style.backgroundColor = 'white'; quiz1.style.color = 'black'});
+   quiz2.addEventListener('mouseover', function(){quiz2.style.backgroundColor = 'orangered'; quiz2.style.color = 'white'});
+   quiz2.addEventListener('mouseout', function(){quiz2.style.backgroundColor = 'white'; quiz2.style.color = 'black'});
+   goBack.addEventListener('mouseover', function(){goBack.style.backgroundColor = 'orangered'; goBack.style.color = 'white'});
+   goBack.addEventListener('mouseout', function(){goBack.style.backgroundColor = 'white'; goBack.style.color = 'black'});
+   quiz1.addEventListener('click', function(){clickedQuiz(quizOne);});
+   quiz2.addEventListener('click', function(){clickedQuiz(quizTwo);});
+   goBack.addEventListener('click', function() {clickedHome();});
+   console.log("Quizes page created");
+}
+
+// Creates the article for a quiz
+function createQuizesPageArticle(header, amount){
+   article = document.createElement('ARTICLE');
+   let h1 = document.createElement('h1');
+   let p  = document.createElement('p');
+   let text = document.createTextNode('This quiz has ' + amount + ' questions');
+   p.appendChild(text);
+   h1.textContent = header;
+   h1.style.fontSize = '1.5em';
+   article.appendChild(h1);
+   article.appendChild(p);
+   return article;
+}
+
+// When a topic is clicked, go to it's quizes page with ajax request
+function clickedQuiz(Title){
+   
+}
 
 // Add the editor and selector attribute changer UI to the footer of each page
 function addSelectors(){
