@@ -7,7 +7,8 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
-var assessmentRouter = require('./routes/assessment');
+require('./routes/assessment')();
+//var assessmentRouter = require('./routes/assessment');
 
 const e = require('express');
 const session = require('express-session');

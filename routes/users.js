@@ -7,7 +7,7 @@ var path = require('path');
 const Joi = require('joi');
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
-var dbFile = path.resolve(__dirname, '../sql/html5.db')
+var dbFile = path.resolve(__dirname, '../sql/html5.db');
 var dbFileExists = fs.existsSync(dbFile);
 var db = new sqlite3.Database(dbFile);
 const dbDef = ['CREATE TABLE Topic(TID INT NOT NULL PRIMARY KEY,T_Title varchar(255),Descriptionlink varchar(255));', 
@@ -56,14 +56,19 @@ db.serialize(function(){
 
 // Read which user's profile is requested and access their info from the profile database
 router.get('/:profile', function(req, res, next) {
-  let totalquestions = 12; // todo: get this out of the questions database eventually
+  let query = 'SELECT COUNT(QAID) AS count FROM Question;';
+  let totalquestions;
+  db.get(query, function(err, row){
+    if (err) { throw err; }
+    if (row) {totalquesitons = row.count;}
+  })
   let p = req.params.profile;
   req.session.completions = req.session.completions || 0;
   
   const { error, value } = schema.validate({ username: p });
 
   if (!error){
-    let query = 'SELECT rowid AS id, username, bio, completion FROM PROFILES WHERE (username="'+ p +'");';
+    let query = 'SELECT rowid AS id, username, bio, completion, question FROM PROFILES WHERE (username="'+ p +'");';
     db.get(query, function(err,row){
       if (err) { throw err; }
       // If user was found, retrieve their data from the profile db

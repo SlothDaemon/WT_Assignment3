@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+
 // For pages in pages, catch the session's user, permission level and messages (if any) for use in the dynamic sites.
 pages = ['/','/index','/assessment','/bernerslee','/features','/history','/w3c']
 router.all(pages, function(req,res,next){
@@ -36,26 +37,13 @@ router.get(['/w3', '/w3c','/w3c.html'], function(req, res, next) {
   res.render('w3c', { title: "W3C", description: 'A description of the World Wide Web Consortium (W3C) founded by Tim Berners-Lee.' });
 });
 
+// AJAX GET requests for Assessment page
 router.get('/load', function(req, res){
   if (req.session.user == null){
-    console.log("No login");
-    var data = { 
-        name:'John', 
-        age:30,
-        city:'New York'
-    };
-    res.send(data);
+    loadNoLogin(req,res);
   }
   else{
-    console.log("User: " + req.session.user);
-    var data = { 
-        name: req.session.user, 
-        age:30,
-        city:'England'
-    };
-    console.log(req.session.user);
-    res.send(data);
+    loadWithUser(req,res);
   }
-  
 })
 module.exports = router;

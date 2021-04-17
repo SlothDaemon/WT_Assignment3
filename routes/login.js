@@ -6,7 +6,7 @@ var hasher = hash();
 var path = require('path');
 
 var fs = require('fs');
-var dbFile = path.resolve(__dirname, '../sql/html5.db') //'/sql/html5.db';
+var dbFile = path.resolve(__dirname, '../sql/html5.db'); //'/sql/html5.db';
 var dbFileExists = fs.existsSync(dbFile);
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(dbFile);
@@ -178,8 +178,8 @@ function registerNewUser(req, res, newUser, newPass){
       });
 
       db.serialize(function(){
-        var stmt = db.prepare('INSERT INTO PROFILES VALUES (?,?,?)');
-        stmt.run(newUser,"",0);
+        var stmt = db.prepare('INSERT INTO PROFILES VALUES (?,?,?,?)');
+        stmt.run(newUser,"",0,null);
         stmt.finalize();
         console.log('added ' + newUser + 's profile to html5.db');
       })

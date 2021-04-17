@@ -1,3 +1,5 @@
+//const app = require("../../app");
+
 function addHandlers(){
    
    const main = document.getElementsByTagName("main")[0];
@@ -269,27 +271,63 @@ function evaluateFillAnswer(e){
 }
 */
 
-// Fill the assessment page with questions
+// Fill the assessment page
 function loadAssessment(){
-   let mainsection = document.getElementById("main-section");
-   let article = document.createElement('ARTICLE');
-   let h1 = document.createElement('h1');
-   h1.textContent = "niks";
-   
    $.ajax({
       type: 'GET',
       url: 'http://localhost:3000/load',
       dataType: 'json',
    }).done(function(data){
-         h1.textContent = data.name;
-         console.log(data.name);
+         console.log("data succesfully sent");
+         if(data.pageType == 'topics'){ createTopicsPage(data.topicOne, data.DLOne, data.topicTwo, data.DLTwo);}
+         //if(data.pageType == 'quizes'){ createQuizesPage(data.quizOne, da)}
+         //if(data.pageType == 'questions'){ createQuestionsPage(data.questionOne, )}
+         //if(data.pageType == 'question'){ createQuestionPage(data.)}
    }).fail(function(jqXHR, textStatus, err){
          console.log('AJAX error response:', textStatus);
    })
-   article.appendChild(h1);
-   mainsection.appendChild(article);
 }
 
+// Lets user choose between the topics
+function createTopicsPage(topicOne, DLOne, topicTwo, DLTwo)
+{
+   let mainsection = document.getElementById("main-section");
+   let h1 = document.createElement('h1');
+   let topic1 = createTopicPageArticle(topicOne, DLOne);
+   let topic2 = createTopicPageArticle(topicTwo, DLTwo);
+   h1.textContent = "Topics";
+   mainsection.appendChild(h1);
+   mainsection.appendChild(topic1);
+   mainsection.appendChild(topic2);
+   topic1.addEventListener('click', function(){clickedTopic(topicOne);})
+   topic2.addEventListener('click', function(){clickedTopic(topicTwo);})
+   console.log("Topics page created");
+}
+
+// Creates the article for a topic
+function createTopicPageArticle(header, link){
+   article = document.createElement('ARTICLE');
+   let h2 = document.createElement('h2');
+   let text = document.createElement('p');
+   let a = document.createElement('a');
+   h2.textContent = header;
+   text.InnerText = "Click here for the topic description";
+   a.title = text.InnerText;
+   a.href = link;
+   article.className = "assessmentArticle";
+   h2.className = "assessmentHeader";
+   text.className = "topiclink";
+   text.appendChild(a);
+   article.appendChild(h2);
+   article.appendChild(text);
+   console.log("Topic article created");
+   return article;
+}
+
+// When a topic is clicked, go to it's quizes page with ajax request
+function clickedTopic(Title){
+   console.log("Topic clicked");
+}
 
 
 // Add the editor and selector attribute changer UI to the footer of each page

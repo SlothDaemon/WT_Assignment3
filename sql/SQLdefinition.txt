@@ -1,7 +1,7 @@
 CREATE TABLE Topic(
   TID INT NOT NULL PRIMARY KEY,
-  T_Title varchar(255),D
-  escriptionlink varchar(255)
+  T_Title varchar(255),
+  Descriptionlink varchar(255)
 ); 
 
 CREATE TABLE Quiz(
@@ -23,7 +23,8 @@ CREATE TABLE Question(
   
 CREATE TABLE PROFILES(
   username TEXT NOT NULL,
-  bio TEXT, completion INTEGER,
+  bio TEXT, 
+  completion INTEGER,
   question INT,
   FOREIGN KEY (question) REFERENCES Question(QAID)
 );
