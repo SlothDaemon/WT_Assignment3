@@ -2,15 +2,21 @@ var express = require('express');
 var router = express.Router();
 var hash = require('pbkdf2-password');
 var hasher = hash();
+var path = require('path');
 
 const Joi = require('joi');
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
-var dbFile = 'public/sql/html5.db';
+var dbFile = path.resolve(__dirname, '../sql/html5.db')
 var dbFileExists = fs.existsSync(dbFile);
 var db = new sqlite3.Database(dbFile);
-const dbDef = 'CREATE TABLE Topic(TID INT NOT NULL PRIMARY KEY, T_Title varchar(255), Descriptionlink varchar(255)); CREATE TABLE Quiz(QID INT NOT NULL PRIMARY KEY, Q_Title varchar(255), Topic INT, FOREIGN KEY (Topic) REFERENCES Topic(TID)); CREATE TABLE Question(QAID INT NOT NULL PRIMARY KEY, QA_Title varchar(255), Type varchar(255), Problem_Statement varchar(255), Answer varchar(255), Quiz INT, FOREIGN KEY (Quiz) REFERENCES Quiz(QID)); CREATE TABLE PROFILES (username TEXT NOT NULL, bio TEXT, completion INTEGER, question INT, FOREIGN KEY (question) REFERENCES Question(QAID)); CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL); CREATE TABLE Attempt(Question INT, RU varchar(255), Attempt varchar(255), FOREIGN KEY (Question) REFERENCES Question(QID), FOREIGN KEY (RU) REFERENCES RU(Login));'
-var path = require('path');
+const dbDef = ['CREATE TABLE Topic(TID INT NOT NULL PRIMARY KEY,T_Title varchar(255),Descriptionlink varchar(255));', 
+               'CREATE TABLE Quiz(QID INT NOT NULL PRIMARY KEY,Q_Title varchar(255),Topic INT,FOREIGN KEY (Topic) REFERENCES Topic(TID));',
+               'CREATE TABLE Question(QAID INT NOT NULL PRIMARY KEY,QA_Title varchar(255),Type varchar(255),Problem_Statement varchar(255),Answer varchar(255),Quiz INT,FOREIGN KEY (Quiz) REFERENCES Quiz(QID));',
+               'CREATE TABLE PROFILES (username TEXT NOT NULL, bio TEXT, completion INTEGER,question INT,FOREIGN KEY (question) REFERENCES Question(QAID));',
+               'CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL);',
+               'CREATE TABLE Attempt(Question INT,RU varchar(255),Attempt varchar(255),FOREIGN KEY (Question) REFERENCES Question(QID),FOREIGN KEY (RU) REFERENCES RU(Login));']
+
 
 // Create a verification schema using Joi to sanitize data inputs
 const schema = Joi.object({
@@ -32,7 +38,9 @@ router.all('*', function(req,res,next){
 // Initialize the admin's credentials and profile if the db doesn't exist yet
 db.serialize(function(){
   if (!dbFileExists) {
-    db.run(dbDef);
+    for (const command of dbDef){
+      db.run(command);
+    }
     var stmt = db.prepare('INSERT INTO LOGINS VALUES (?,?,?,?)');
     hasher({password: 'opensesame'}, function(err, pass, salt, hash){
       if (err)  throw err; 

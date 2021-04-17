@@ -4,9 +4,10 @@ var router = express.Router();
 const Joi = require('joi');
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
-var dbFile = 'public/sql/html5.db';
-var db = new sqlite3.Database(dbFile);
 var path = require('path');
+var dbFile = path.resolve(__dirname, '../sql/html5.db')
+var db = new sqlite3.Database(dbFile);
+
 
 router.get('/load', function(req, res){
     console.log("Data send from assessment");

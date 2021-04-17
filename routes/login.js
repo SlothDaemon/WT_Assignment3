@@ -3,14 +3,20 @@ const e = require('express');
 const session = require('express-session');
 var hash = require('pbkdf2-password');
 var hasher = hash();
+var path = require('path');
 
 var fs = require('fs');
-var dbFile = 'public/sql/html5.db';
+var dbFile = path.resolve(__dirname, '../sql/html5.db') //'/sql/html5.db';
 var dbFileExists = fs.existsSync(dbFile);
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(dbFile);
 
-const dbDef = 'CREATE TABLE Topic(TID INT NOT NULL PRIMARY KEY, T_Title varchar(255), Descriptionlink varchar(255)); CREATE TABLE Quiz(QID INT NOT NULL PRIMARY KEY, Q_Title varchar(255), Topic INT, FOREIGN KEY (Topic) REFERENCES Topic(TID)); CREATE TABLE Question(QAID INT NOT NULL PRIMARY KEY, QA_Title varchar(255), Type varchar(255), Problem_Statement varchar(255), Answer varchar(255), Quiz INT, FOREIGN KEY (Quiz) REFERENCES Quiz(QID)); CREATE TABLE PROFILES (username TEXT NOT NULL, bio TEXT, completion INTEGER, question INT, FOREIGN KEY (question) REFERENCES Question(QAID)); CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL); CREATE TABLE Attempt(Question INT, RU varchar(255), Attempt varchar(255), FOREIGN KEY (Question) REFERENCES Question(QAID), FOREIGN KEY (RU) REFERENCES RU(Login));'
+const dbDef = ['CREATE TABLE Topic(TID INT NOT NULL PRIMARY KEY,T_Title varchar(255),Descriptionlink varchar(255));', 
+               'CREATE TABLE Quiz(QID INT NOT NULL PRIMARY KEY,Q_Title varchar(255),Topic INT,FOREIGN KEY (Topic) REFERENCES Topic(TID));',
+               'CREATE TABLE Question(QAID INT NOT NULL PRIMARY KEY,QA_Title varchar(255),Type varchar(255),Problem_Statement varchar(255),Answer varchar(255),Quiz INT,FOREIGN KEY (Quiz) REFERENCES Quiz(QID));',
+               'CREATE TABLE PROFILES (username TEXT NOT NULL, bio TEXT, completion INTEGER,question INT,FOREIGN KEY (question) REFERENCES Question(QAID));',
+               'CREATE TABLE LOGINS (username TEXT NOT NULL, salt HASHBYTES NOT NULL, hash HASHBYTES NOT NULL, permissionlevel INTEGER NOT NULL);',
+               'CREATE TABLE Attempt(Question INT,RU varchar(255),Attempt varchar(255),FOREIGN KEY (Question) REFERENCES Question(QID),FOREIGN KEY (RU) REFERENCES RU(Login));']
 
 var login = e.Router();
 
@@ -38,13 +44,6 @@ function errors(err) {
     res.locals.user = req.session.user
     res.locals.msgs = req.session.messages || [];
     res.locals.msgs.push(['error', 'Error ' + err.status + ' ' + err.message]);
-    
-    /* // verbose error page (too verbose to be safe for production, please comment out for end product)
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-    res.status(err.status || 500);
-    res.locals.title = "Error " + err.status;
-    res.render('error'); */
     res.redirect('back');
   }
 }
@@ -52,7 +51,9 @@ function errors(err) {
 // Initialize the admin's credentials and profile if the db doesn't exist yet
 db.serialize(function(){
   if (!dbFileExists) {
-    db.run(dbDef);
+    for (const command of dbDef){
+      db.run(command);
+    }
     var stmt = db.prepare('INSERT INTO LOGINS VALUES (?,?,?,?)');
     hasher({password: 'opensesame'}, function(err, pass, salt, hash){
       if (err)  throw err; 
