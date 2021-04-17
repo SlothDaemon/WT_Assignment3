@@ -352,7 +352,7 @@ function clickedTopic(Title){
       }
    }).done(function(data){
       console.log("Quizes info recieved");
-      if(data.pageType == 'quizes'){createQuizesPage(data.quizOne, data.quizOneQuestions, data.quizTwo, data.quizTwoQuestions)}
+      if(data.pageType == 'quizes'){createQuizesPage(data.quizOne, data.quizOneQuestions, data.quizTwo, data.quizTwoQuestions, Title)}
 
    }).fail(function(jqXHR, textStatus, err){
       console.log('AJAX error response:', textStatus);
@@ -360,12 +360,12 @@ function clickedTopic(Title){
 }
 
 // Lets user choose between the quizes
-function createQuizesPage(quizOne, q1Questions, quizTwo, q2Questions){
+function createQuizesPage(quizOne, q1Questions, quizTwo, q2Questions, topic){
    let mainsection = document.getElementById("main-section");
    while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
    mainsection.style.display = 'block';
    let h1 = document.createElement('h1');
-   h1.textContent = 'Quizes';
+   h1.textContent = topic + ' Quizes';
    h1.style.textAlign = 'center';
    mainsection.appendChild(h1);
    let quiz1 = createQuizesPageArticle(quizOne, q1Questions);
@@ -385,8 +385,8 @@ function createQuizesPage(quizOne, q1Questions, quizTwo, q2Questions){
    quiz2.addEventListener('mouseout', function(){quiz2.style.backgroundColor = 'white'; quiz2.style.color = 'black'});
    goBack.addEventListener('mouseover', function(){goBack.style.backgroundColor = 'orangered'; goBack.style.color = 'white'});
    goBack.addEventListener('mouseout', function(){goBack.style.backgroundColor = 'white'; goBack.style.color = 'black'});
-   quiz1.addEventListener('click', function(){clickedQuiz(quizOne);});
-   quiz2.addEventListener('click', function(){clickedQuiz(quizTwo);});
+   quiz1.addEventListener('click', function(){clickedQuiz(quizOne, topic);});
+   quiz2.addEventListener('click', function(){clickedQuiz(quizTwo, topic);});
    goBack.addEventListener('click', function() {clickedHome();});
    console.log("Quizes page created");
 }
@@ -406,25 +406,26 @@ function createQuizesPageArticle(header, amount){
 }
 
 // When a quiz is clicked, go to it's questions page with ajax request
-function clickedQuiz(Title){
+function clickedQuiz(Title, Topic){
    $.ajax({
       type: 'GET',
       url: 'http://localhost:3000/click',
       dataType: 'json',
       data: {
          type: 'quiz',
-         quiz : Title
+         quiz : Title,
+         topic: Topic
       }
    }).done(function(data){
       console.log("Questions info recieved");
-      if(data.pageType == 'questions'){createQuestionsPage(data.questionOne, data.questionOneType, data.questionTwo, data.questionTwoType, data.questionThree, data.questionThreeType, data.quiz)}
+      if(data.pageType == 'questions'){createQuestionsPage(data.questionOne, data.questionOneType, data.questionTwo, data.questionTwoType, data.questionThree, data.questionThreeType, data.quiz, data.topic)}
 
    }).fail(function(jqXHR, textStatus, err){
       console.log('AJAX error response:', textStatus);
    })
 }
 
-function createQuestionsPage(questionOne, type1, questionTwo, type2, questionThree, type3, quiz){
+function createQuestionsPage(questionOne, type1, questionTwo, type2, questionThree, type3, quiz, topic){
    let mainsection = document.getElementById("main-section");
    while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
    mainsection.style.display = 'block';
@@ -445,18 +446,18 @@ function createQuestionsPage(questionOne, type1, questionTwo, type2, questionThr
    goBack.appendChild(p);
    mainsection.appendChild(goBack);
 
-   question1.addEventListener('mouseover', function(){quesiton1.style.backgroundColor = 'orangered'; quesiton1.style.color = 'white'});
-   question1.addEventListener('mouseout', function(){quesiton1.style.backgroundColor = 'white'; quesiton1.style.color = 'black'});
-   question2.addEventListener('mouseover', function(){quesiton2.style.backgroundColor = 'orangered'; quesiton2.style.color = 'white'});
-   question2.addEventListener('mouseout', function(){quesiton2.style.backgroundColor = 'white'; quesiton2.style.color = 'black'});
-   question3.addEventListener('mouseover', function(){quesiton3.style.backgroundColor = 'orangered'; quesiton3.style.color = 'white'});
-   question3.addEventListener('mouseout', function(){quesiton3.style.backgroundColor = 'white'; quesiton3.style.color = 'black'});
+   question1.addEventListener('mouseover', function(){question1.style.backgroundColor = 'orangered'; question1.style.color = 'white'});
+   question1.addEventListener('mouseout', function(){question1.style.backgroundColor = 'white'; question1.style.color = 'black'});
+   question2.addEventListener('mouseover', function(){question2.style.backgroundColor = 'orangered'; question2.style.color = 'white'});
+   question2.addEventListener('mouseout', function(){question2.style.backgroundColor = 'white'; question2.style.color = 'black'});
+   question3.addEventListener('mouseover', function(){question3.style.backgroundColor = 'orangered'; question3.style.color = 'white'});
+   question3.addEventListener('mouseout', function(){question3.style.backgroundColor = 'white'; question3.style.color = 'black'});
    goBack.addEventListener('mouseover', function(){goBack.style.backgroundColor = 'orangered'; goBack.style.color = 'white'});
    goBack.addEventListener('mouseout', function(){goBack.style.backgroundColor = 'white'; goBack.style.color = 'black'});
    question1.addEventListener('click', function(){clickedQuestion(questionOne);});
    question2.addEventListener('click', function(){clickedQuestion(questionTwo);});
    question3.addEventListener('click', function(){clickedQuestion(questionThree);});
-   goBack.addEventListener('click', function(){clickedQuiz(quiz);});
+   goBack.addEventListener('click', function(){clickedTopic(topic);});
    console.log("Quizes page created");
 }
 

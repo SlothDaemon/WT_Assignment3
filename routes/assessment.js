@@ -38,7 +38,7 @@ module.exports = function(){
 
     this.quizClicked = function(req,res){
         console.log("quiz clicked");
-        var data = questionsPage(req.query.quiz);
+        var data = questionsPage(req.query.quiz, req.query.topic);
         res.send(data);
     }
 
@@ -99,8 +99,7 @@ module.exports = function(){
                     quizOne: result.rows[0].Q_Title,
                     quizOneQuestions: quizOneAmount,
                     quizTwo: result.rows[1].Q_Title,
-                    quizTwoQuestions: quizTwoAmount,
-                    topic: Title
+                    quizTwoQuestions: quizTwoAmount
                 }
                 return data;  
             }
@@ -116,7 +115,7 @@ module.exports = function(){
     }
 
     // Respond with questions data
-    this.questionsPage = function(Title){
+    this.questionsPage = function(Title, Topic){
         console.log("questionspage function");
         let query = 'SELECT qa.QA_Title, qa.Type FROM Question qa, Quiz q WHERE qa.Quiz = q.QID AND q.Q_Title = ' + Title + ';';
         /*db.get(query, function(err, result){
@@ -130,7 +129,8 @@ module.exports = function(){
                     questionTwoType: result.rows[0].Type,
                     questionThree: result.rows[2].QA_Title,
                     questionThreeType: result.rows[0].Type,
-                    quiz: Title
+                    quiz: Title,
+                    topic: Topic
                 }
             }
         })*/
@@ -142,7 +142,8 @@ module.exports = function(){
             questionTwoType: 'y',
             questionThree: 'question3',
             questionThreeType: 'z',
-            quiz: Title
+            quiz: Title,
+            topic: Topic
         }
         return data;
     }
