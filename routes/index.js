@@ -47,6 +47,7 @@ router.get('/load', function(req, res){
   }
 });
 
+// AJAX GET request for Assessment page after something is clicked
 router.get('/click', function(req,res){
   if(req.query.type == 'topic'){
     topicClicked(req,res);

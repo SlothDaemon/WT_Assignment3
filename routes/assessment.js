@@ -22,15 +22,23 @@ module.exports = function(){
         res.send(data);
     }
 
+    // When user wants to go back to the topics page
     this.homeClicked = function(req,res){
         console.log("home clicked");
         var data = topicsPage();
         res.send(data);
     }
 
+    // When user wants to quizes page
     this.topicClicked = function(req,res){
         console.log("topic clicked");
         var data = quizesPage(req.query.topic);
+        res.send(data);
+    }
+
+    this.quizClicked = function(req,res){
+        console.log("quiz clicked");
+        var data = questionsPage(req.query.quiz);
         res.send(data);
     }
 
@@ -62,6 +70,7 @@ module.exports = function(){
         return data;
     }
 
+    // Resopnd with quizes data
     this.quizesPage = function(Title){
         console.log("quizespage function");
         let query = 'SELECT q.Q_Title FROM Quiz q, Topic t WHERE q.Topic = t.TID AND t.T_title = ' + Title + ';'; 
@@ -99,10 +108,41 @@ module.exports = function(){
         var data = {
             pageType: 'quizes',
             quizOne: 'quiz1',
-            quizOneQuestions: 2,
+            quizOneQuestions: 3,
             quizTwo: 'quiz2',
-            quizTwoQuestions: 3,
-            topic: Title
+            quizTwoQuestions: 3
+        }
+        return data;
+    }
+
+    // Respond with questions data
+    this.questionsPage = function(Title){
+        console.log("questionspage function");
+        let query = 'SELECT qa.QA_Title, qa.Type FROM Question qa, Quiz q WHERE qa.Quiz = q.QID AND q.Q_Title = ' + Title + ';';
+        /*db.get(query, function(err, result){
+            if (err || !result) { throw err; }
+            if (result) {
+                var data = {
+                    pageType: 'questions',
+                    questionOne: result.rows[0].QA_Title,
+                    questionOneType: result.rows[0].Type,
+                    questionTwo: result.rows[1].QA_Title,
+                    questionTwoType: result.rows[0].Type,
+                    questionThree: result.rows[2].QA_Title,
+                    questionThreeType: result.rows[0].Type,
+                    quiz: Title
+                }
+            }
+        })*/
+        var data = {
+            pageType: 'questions',
+            questionOne: 'question1',
+            questionOneType: 'x',
+            questionTwo: 'question2',
+            questionTwoType: 'y',
+            questionThree: 'question3',
+            questionThreeType: 'z',
+            quiz: Title
         }
         return data;
     }

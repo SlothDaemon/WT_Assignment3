@@ -405,9 +405,76 @@ function createQuizesPageArticle(header, amount){
    return article;
 }
 
-// When a topic is clicked, go to it's quizes page with ajax request
+// When a quiz is clicked, go to it's questions page with ajax request
 function clickedQuiz(Title){
-   
+   $.ajax({
+      type: 'GET',
+      url: 'http://localhost:3000/click',
+      dataType: 'json',
+      data: {
+         type: 'quiz',
+         quiz : Title
+      }
+   }).done(function(data){
+      console.log("Questions info recieved");
+      if(data.pageType == 'questions'){createQuestionsPage(data.questionOne, data.questionOneType, data.questionTwo, data.questionTwoType, data.questionThree, data.questionThreeType, data.quiz)}
+
+   }).fail(function(jqXHR, textStatus, err){
+      console.log('AJAX error response:', textStatus);
+   })
+}
+
+function createQuestionsPage(questionOne, type1, questionTwo, type2, questionThree, type3, quiz){
+   let mainsection = document.getElementById("main-section");
+   while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
+   mainsection.style.display = 'block';
+   let h1 = document.createElement('h1');
+   h1.textContent = 'Questions';
+   h1.style.textAlign = 'center';
+   mainsection.appendChild(h1);
+   let question1 = createQuestionsPageArticle(questionOne, type1);
+   let question2 = createQuestionsPageArticle(questionTwo, type2);
+   let question3 = createQuestionsPageArticle(questionThree, type3);
+   mainsection.appendChild(question1);
+   mainsection.appendChild(question2);
+   mainsection.appendChild(question3);
+   let goBack = document.createElement('article');
+   let p = document.createElement('p');
+   let text = document.createTextNode('Go back to Quizes');
+   p.appendChild(text);
+   goBack.appendChild(p);
+   mainsection.appendChild(goBack);
+
+   question1.addEventListener('mouseover', function(){quesiton1.style.backgroundColor = 'orangered'; quesiton1.style.color = 'white'});
+   question1.addEventListener('mouseout', function(){quesiton1.style.backgroundColor = 'white'; quesiton1.style.color = 'black'});
+   question2.addEventListener('mouseover', function(){quesiton2.style.backgroundColor = 'orangered'; quesiton2.style.color = 'white'});
+   question2.addEventListener('mouseout', function(){quesiton2.style.backgroundColor = 'white'; quesiton2.style.color = 'black'});
+   question3.addEventListener('mouseover', function(){quesiton3.style.backgroundColor = 'orangered'; quesiton3.style.color = 'white'});
+   question3.addEventListener('mouseout', function(){quesiton3.style.backgroundColor = 'white'; quesiton3.style.color = 'black'});
+   goBack.addEventListener('mouseover', function(){goBack.style.backgroundColor = 'orangered'; goBack.style.color = 'white'});
+   goBack.addEventListener('mouseout', function(){goBack.style.backgroundColor = 'white'; goBack.style.color = 'black'});
+   question1.addEventListener('click', function(){clickedQuestion(questionOne);});
+   question2.addEventListener('click', function(){clickedQuestion(questionTwo);});
+   question3.addEventListener('click', function(){clickedQuestion(questionThree);});
+   goBack.addEventListener('click', function(){clickedQuiz(quiz);});
+   console.log("Quizes page created");
+}
+
+function createQuestionsPageArticle(header, type){
+   article = document.createElement('ARTICLE');
+   let h1 = document.createElement('h1');
+   let p  = document.createElement('p');
+   let text = document.createTextNode('This is a ' + type + ' question');
+   p.appendChild(text);
+   h1.textContent = header;
+   h1.style.fontSize = '1.5em';
+   article.appendChild(h1);
+   article.appendChild(p);
+   return article;
+}
+
+function clickedQuestion(Title){
+
 }
 
 // Add the editor and selector attribute changer UI to the footer of each page
