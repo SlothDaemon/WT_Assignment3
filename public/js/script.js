@@ -252,7 +252,12 @@ function evaluateAnswer(target, user, answered, question, type){
          else{
             answer = "";
             for (let i = 0; i<answered.length; i++){
-               answer += (answered[i].toLowerCase());
+               if(answered[i] >= 'A' && answered[i] <= 'Z'){
+                  answer += answered[i].toLowerCase();
+               }
+               else{
+                  answer += answered[i];
+               }
             }
          }
 
@@ -477,7 +482,7 @@ function createQuestionsPage(questionOne, type1, questionTwo, type2, questionThr
    while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
    mainsection.style.display = 'block';
    let h1 = document.createElement('h1');
-   h1.textContent = topic + ' ' + quiz + ' Questions';
+   h1.textContent = topic + ': ' + quiz;
    h1.style.textAlign = 'center';
    mainsection.appendChild(h1);
    let question1 = createQuestionsPageArticle(questionOne, type1);
@@ -528,7 +533,7 @@ function createAnswerPage(data){
    while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
    mainsection.style.display = 'block';
    let h1 = document.createElement('h1');
-   h1.textContent = data.quiz + ' ' + data.title;
+   h1.textContent = data.topic + ': ' + data.quiz + ' ' + data.title;
    h1.style.textAlign = 'center';
    mainsection.appendChild(h1);
    let goBack = document.createElement('article');
@@ -538,7 +543,7 @@ function createAnswerPage(data){
    goBack.appendChild(p);
    let question = document.createElement('ARTICLE');
    let questionHeader = document.createElement('h1');
-   questionHeader.textContent = data.question;
+   questionHeader.textContent = data.question + '?';
    questionHeader.style.fontSize = '1.5em'; 
    question.appendChild(questionHeader);
 
