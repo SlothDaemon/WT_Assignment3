@@ -3,39 +3,38 @@ CREATE TABLE Topic(
   T_Title varchar(255),
   Descriptionlink varchar(255)
 ); 
-
+ 
 CREATE TABLE Quiz(
   QID INT NOT NULL PRIMARY KEY,
   Q_Title varchar(255),
   Topic INT,
   FOREIGN KEY (Topic) REFERENCES Topic(TID)
 );
-  
+
 CREATE TABLE Question(
   QAID INT NOT NULL PRIMARY KEY,
   QA_Title varchar(255),
   Type varchar(255),
   Problem_Statement varchar(255),
   Answer varchar(255),
-  Quiz INT,
-  FOREIGN KEY (Quiz) REFERENCES Quiz(QID)
+  Quiz INT,FOREIGN KEY (Quiz) REFERENCES Quiz(QID)
 );
-  
+
 CREATE TABLE PROFILES(
   username TEXT NOT NULL,
-  bio TEXT, 
+  bio TEXT,
   completion INTEGER,
   question INT,
   FOREIGN KEY (question) REFERENCES Question(QAID)
 );
-  
+
 CREATE TABLE LOGINS(
-  username TEXT NOT NULL, 
-  salt HASHBYTES NOT NULL, 
-  hash HASHBYTES NOT NULL, 
+  username TEXT NOT NULL,
+  salt HASHBYTES NOT NULL,
+  hash HASHBYTES NOT NULL,
   permissionlevel INTEGER NOT NULL
 );
-  
+ 
 CREATE TABLE Attempt(
   Question INT,
   User varchar(255),
@@ -51,4 +50,4 @@ CREATE TABLE MultipleChoice(
   option3 varchar(255),
   option4 varchar(255),
   FOREIGN KEY (question) REFERENCES Question(QAID)
-);
+ )
