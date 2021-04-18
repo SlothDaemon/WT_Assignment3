@@ -38,10 +38,10 @@ CREATE TABLE LOGINS(
   
 CREATE TABLE Attempt(
   Question INT,
-  RU varchar(255),
+  User varchar(255),
   Attempt varchar(255),
   FOREIGN KEY (Question) REFERENCES Question(QID),
-  FOREIGN KEY (RU) REFERENCES RU(Login)
+  FOREIGN KEY (User) REFERENCES PROFILES(username)
 );
 
 CREATE TABLE MultipleChoice(

@@ -241,35 +241,43 @@ function changeSelected(){
    }
 }
 
-/*
-// If an answer to an MC question is selected, change the div's style accordingly
-function evaluateMCAnswer(e){
-   if(e.target && e.target.nodeName == "INPUT" && e.target.type === 'radio' && e.target.value==='false'){
-      e.target.parentNode.parentNode.style.color = "red";
+// If an answer to an MC question is selected, check if user is logged in, then evaluate or tell user to log in
+function evaluateMCAnswer(target, user){
+   if(user){
+      //ajax
    }
-   else if (e.target && e.target.nodeName == "INPUT" && e.target.type === 'radio' && e.target.value==='true'){
-      e.target.parentNode.parentNode.style.color = "green";
+   else{
+      console.log("No user logged in");
+      if(target && target.nodeName == "INPUT" && target.type === 'radio'){
+         console.log("No user logged in");
+         let p = document.createElement('p');
+         let text = document.createTextNode("Log in to evaluate your answer!");
+         p.appendChild(text);
+         p.style.color = 'red';
+         target.parentNode.appendChild(p);
+      }
    }
 }
 
-// Check if all the inputs, in lowercase, correspond with the correct answers
-// If all answers are true, change the div style accordingly
-function evaluateFillAnswer(e){
-   let article = document.getElementById('question'+e.target.id);
-   let givenAnswers = article.getElementsByTagName("INPUT");
-   var correct = true;
-   for (let i = 0; i<givenAnswers.length; i++){
-      correct = ((givenAnswers[i].value.toLowerCase() === this.answers[i].toLowerCase()) && correct);
+// If the evaluate button is clicked, check if user is logged in, then evaluate or tell user to log in
+function evaluateOpenAnswer(target, user, answered){
+   if(user){
+      let answer;
+      for (let i = 0; i<answered.length; i++){
+         answer += (answered[i].value.toLowerCase());
+      }
+      //ajax
    }
-
-   if (correct) {
-      e.target.parentNode.parentNode.style.color ="green";
-   }
-   else {
-      e.target.parentNode.parentNode.style.color ="red";
+   else{
+      console.log("No user logged in");
+      let p = document.createElement('p');
+      let text = document.createTextNode("Log in to evaluate your answer!");
+      p.appendChild(text);
+      p.style.color = 'red';
+      target.parentNode.appendChild(p);
    }
 }
-*/
+
 
 // Fill the assessment page
 function loadAssessment(){
@@ -280,7 +288,7 @@ function loadAssessment(){
    }).done(function(data){
          console.log("data succesfully sent");
          if(data.pageType == 'topics'){ createTopicsPage(data.topicOne, data.DLOne, data.topicTwo, data.DLTwo);}
-         //if(data.pageType == 'question'){ createQuestionPage(data.)}
+         if(data.pageType == 'question'){ createAnswerPage(data)}
    }).fail(function(jqXHR, textStatus, err){
          console.log('AJAX error response:', textStatus);
    })
@@ -298,6 +306,66 @@ function clickedHome(){
          if(data.pageType == 'topics'){ createTopicsPage(data.topicOne, data.DLOne, data.topicTwo, data.DLTwo);}
    }).fail(function(jqXHR, textStatus, err){
          console.log('AJAX error response:', textStatus);
+   })
+}
+
+// When a topic is clicked, go to it's quizes page with ajax request
+function clickedTopic(Title){
+   $.ajax({
+      type: 'GET',
+      url: 'http://localhost:3000/click',
+      dataType: 'json',
+      data: {
+         type: 'topic',
+         topic : Title
+      }
+   }).done(function(data){
+      console.log("Quizes info recieved");
+      if(data.pageType == 'quizes'){createQuizesPage(data.quizOne, data.quizOneQuestions, data.quizTwo, data.quizTwoQuestions, data.topic)}
+
+   }).fail(function(jqXHR, textStatus, err){
+      console.log('AJAX error response:', textStatus);
+   })
+}
+
+// When a quiz is clicked, go to it's questions page with ajax request
+function clickedQuiz(Title, Topic){
+   $.ajax({
+      type: 'GET',
+      url: 'http://localhost:3000/click',
+      dataType: 'json',
+      data: {
+         type: 'quiz',
+         quiz : Title,
+         topic: Topic
+      }
+   }).done(function(data){
+      console.log("Questions info recieved");
+      if(data.pageType == 'questions'){createQuestionsPage(data.questionOne, data.questionOneType, data.questionTwo, data.questionTwoType, data.questionThree, data.questionThreeType, data.quiz, data.topic)}
+
+   }).fail(function(jqXHR, textStatus, err){
+      console.log('AJAX error response:', textStatus);
+   })
+}
+
+// When a question is clicked go to it's page with ajax request
+function clickedQuestion(Title, Quiz, Topic){
+   $.ajax({
+      type: 'GET',
+      url: 'http://localhost:3000/click',
+      dataType: 'json',
+      data: {
+         type: 'question',
+         question: Title,
+         quiz: Quiz,
+         topic: Topic
+      }
+   }).done(function(data){
+      console.log("Question info recieved");
+      if(data.pageType == 'question'){createAnswerPage(data)}
+
+   }).fail(function(jqXHR, textStatus, err){
+      console.log('AJAX error response:', textStatus);
    })
 }
 
@@ -338,25 +406,6 @@ function createTopicPageArticle(header, link){
    article.appendChild(h1);
    article.appendChild(a);
    return article;
-}
-
-// When a topic is clicked, go to it's quizes page with ajax request
-function clickedTopic(Title){
-   $.ajax({
-      type: 'GET',
-      url: 'http://localhost:3000/click',
-      dataType: 'json',
-      data: {
-         type: 'topic',
-         topic : Title
-      }
-   }).done(function(data){
-      console.log("Quizes info recieved");
-      if(data.pageType == 'quizes'){createQuizesPage(data.quizOne, data.quizOneQuestions, data.quizTwo, data.quizTwoQuestions, Title)}
-
-   }).fail(function(jqXHR, textStatus, err){
-      console.log('AJAX error response:', textStatus);
-   })
 }
 
 // Lets user choose between the quizes
@@ -405,32 +454,13 @@ function createQuizesPageArticle(header, amount){
    return article;
 }
 
-// When a quiz is clicked, go to it's questions page with ajax request
-function clickedQuiz(Title, Topic){
-   $.ajax({
-      type: 'GET',
-      url: 'http://localhost:3000/click',
-      dataType: 'json',
-      data: {
-         type: 'quiz',
-         quiz : Title,
-         topic: Topic
-      }
-   }).done(function(data){
-      console.log("Questions info recieved");
-      if(data.pageType == 'questions'){createQuestionsPage(data.questionOne, data.questionOneType, data.questionTwo, data.questionTwoType, data.questionThree, data.questionThreeType, data.quiz, data.topic)}
-
-   }).fail(function(jqXHR, textStatus, err){
-      console.log('AJAX error response:', textStatus);
-   })
-}
-
+// Lets user choose between questions
 function createQuestionsPage(questionOne, type1, questionTwo, type2, questionThree, type3, quiz, topic){
    let mainsection = document.getElementById("main-section");
    while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
    mainsection.style.display = 'block';
    let h1 = document.createElement('h1');
-   h1.textContent = 'Questions';
+   h1.textContent = topic + ' ' + quiz + ' Questions';
    h1.style.textAlign = 'center';
    mainsection.appendChild(h1);
    let question1 = createQuestionsPageArticle(questionOne, type1);
@@ -454,13 +484,14 @@ function createQuestionsPage(questionOne, type1, questionTwo, type2, questionThr
    question3.addEventListener('mouseout', function(){question3.style.backgroundColor = 'white'; question3.style.color = 'black'});
    goBack.addEventListener('mouseover', function(){goBack.style.backgroundColor = 'orangered'; goBack.style.color = 'white'});
    goBack.addEventListener('mouseout', function(){goBack.style.backgroundColor = 'white'; goBack.style.color = 'black'});
-   question1.addEventListener('click', function(){clickedQuestion(questionOne);});
-   question2.addEventListener('click', function(){clickedQuestion(questionTwo);});
-   question3.addEventListener('click', function(){clickedQuestion(questionThree);});
+   question1.addEventListener('click', function(){clickedQuestion(questionOne, quiz, topic);});
+   question2.addEventListener('click', function(){clickedQuestion(questionTwo, quiz, topic);});
+   question3.addEventListener('click', function(){clickedQuestion(questionThree, quiz, topic);});
    goBack.addEventListener('click', function(){clickedTopic(topic);});
    console.log("Quizes page created");
 }
 
+// Creates the article for a question
 function createQuestionsPageArticle(header, type){
    article = document.createElement('ARTICLE');
    let h1 = document.createElement('h1');
@@ -474,9 +505,87 @@ function createQuestionsPageArticle(header, type){
    return article;
 }
 
-function clickedQuestion(Title){
+// Creates the article of a specific question, the user can answer if logged in
+function createAnswerPage(data){
+   let mainsection = document.getElementById("main-section");
+   while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
+   mainsection.style.display = 'block';
+   let h1 = document.createElement('h1');
+   h1.textContent = data.quiz + ' ' + data.title;
+   h1.style.textAlign = 'center';
+   mainsection.appendChild(h1);
+   let goBack = document.createElement('article');
+   let p = document.createElement('p');
+   let text = document.createTextNode('Go back to Questions');
+   p.appendChild(text);
+   goBack.appendChild(p);
+   let question = document.createElement('ARTICLE');
+   let questionHeader = document.createElement('h1');
+   questionHeader.textContent = data.question;
+   questionHeader.style.fontSize = '1.5em'; 
+   question.appendChild(questionHeader);
+
+   let answerForm;
+   if (data.type == 'MultipleChoice'){
+      answerForm = createAnswerFormMC(data.option1, data.option2, data.option3, data.option4);
+      question.addEventListener('click', function(e){evaluateMCAnswer(e.target, data.user)});
+   }
+   else{
+      answerForm = createAnswerFormOpen(data.user);
+   }
+   question.appendChild(answerForm);
+   mainsection.appendChild(question);
+   goBack.addEventListener('mouseover', function(){goBack.style.backgroundColor = 'orangered'; goBack.style.color = 'white'});
+   goBack.addEventListener('mouseout', function(){goBack.style.backgroundColor = 'white'; goBack.style.color = 'black'});
+   goBack.addEventListener('click', function(){clickedQuiz(data.quiz, data.topic);});
+   mainsection.appendChild(goBack);
 
 }
+
+// Creates the answer form for a multiple choice question
+function createAnswerFormMC(option1, option2, option3, option4){
+   form = document.createElement('FORM');
+   createAnswersMC(form, option1);
+   createAnswersMC(form, option2);
+   createAnswersMC(form, option3);
+   createAnswersMC(form, option4);
+   return form;
+}
+
+// Creates the answer form for a open question
+function createAnswerFormOpen(user){
+   form = document.createElement('FORM');
+   input = document.createElement('INPUT');
+   input.setAttribute('type','text');
+   input.setAttribute('id','answer');
+   let label = document.createElement("LABEL");
+   label.setAttribute('for','answer');
+   label.appendChild(document.createTextNode('Answer: '));
+   let button = document.createElement('button');
+   button.setAttribute('type', 'button');
+   button.appendChild(document.createTextNode('Evaluate'));
+   button.addEventListener('click', function(e){evaluateOpenAnswer(e.target, user, input.value)});
+   form.appendChild(label);
+   form.appendChild(input);
+   form.appendChild(button);
+   return form;
+}
+
+function createAnswersMC(form, option){
+   var input = document.createElement("INPUT");
+   input.setAttribute('type','radio');
+   input.setAttribute('id',option);
+   input.setAttribute('name', 'answer');
+
+   var label = document.createElement("LABEL");
+   label.setAttribute('for',option);
+   label.appendChild(document.createTextNode(option));
+
+   form.appendChild(document.createElement("BR"));
+   form.appendChild(input);
+   form.appendChild(label);
+}
+
 
 // Add the editor and selector attribute changer UI to the footer of each page
 function addSelectors(){
@@ -554,23 +663,7 @@ class MultipleChoice extends Question {
    }
    
    // DOM manipulation to create the rest of the question
-   createAnswers(form, nr){
-      for (let i=0; i<this.answers.length; i++){
-         var input = document.createElement("INPUT");
-         input.setAttribute('type','radio');
-         input.setAttribute('name','answer'+nr);
-         input.setAttribute('value',this.answers[i].correct);
-         input.setAttribute('id','answer'+nr+i);
-
-         var label = document.createElement("LABEL");
-         label.setAttribute('for','answer'+nr+i);
-         label.appendChild(document.createTextNode(this.answers[i].value));
-
-         form.appendChild(document.createElement("BR"));
-         form.appendChild(input);
-         form.appendChild(label);
-      }
-   }
+   
 }
 
 class MultipleChoiceAnswer{
@@ -661,17 +754,19 @@ function fillQuestions(){
 
 // Run the list of DOM manipulation functions once the window has loaded
 function initialise() {
-   addSelectors();
    addHandlers();
-   fillSelector();
-   fillEditor();
-   enableEditor();
    collapseArticleHeaders();
    addLoginUI();
    addEditBioButton();
    addMessageClosers();
    if (document.title === "Assessment"){
       loadAssessment();
+   }
+   else{
+      addSelectors();
+      fillSelector();
+      fillEditor();
+      enableEditor();
    }
 
 }
