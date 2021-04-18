@@ -311,12 +311,12 @@ function loadAssessment(){
    $.ajax({
       type: 'GET',
       url: 'http://localhost:3000/load',
-      dataType: 'json',
+      dataType: 'json'
    }).done(function(data){
          if(data.pageType == 'topics'){ createTopicsPage(data.topicOne, data.DLOne, data.topicTwo, data.DLTwo);}
          if(data.pageType == 'question'){ createAnswerPage(data)}
    }).fail(function(jqXHR, textStatus, err){
-         console.log('AJAX error response:', textStatus);
+         console.log('AJAX error response:', err);
    })
 }
 
@@ -345,7 +345,7 @@ function clickedTopic(Title){
          topic : Title
       }
    }).done(function(data){
-      if(data.pageType == 'quizes'){createQuizesPage(data.quizOne, data.quizOneQuestions, data.quizTwo, data.quizTwoQuestions, data.topic)}
+      if(data.pageType == 'quizes'){createQuizesPage(data.quizOne, data.quizTwo, data.topic)}
 
    }).fail(function(jqXHR, textStatus, err){
       console.log('AJAX error response:', textStatus);
@@ -431,7 +431,7 @@ function createTopicPageArticle(header, link){
 }
 
 // Lets user choose between the quizes
-function createQuizesPage(quizOne, q1Questions, quizTwo, q2Questions, topic){
+function createQuizesPage(quizOne, quizTwo, topic){
    let mainsection = document.getElementById("main-section");
    while(mainsection.firstChild){mainsection.removeChild(mainsection.lastChild)}
    mainsection.style.display = 'block';
@@ -439,8 +439,8 @@ function createQuizesPage(quizOne, q1Questions, quizTwo, q2Questions, topic){
    h1.textContent = topic + ' Quizes';
    h1.style.textAlign = 'center';
    mainsection.appendChild(h1);
-   let quiz1 = createQuizesPageArticle(quizOne, q1Questions);
-   let quiz2 = createQuizesPageArticle(quizTwo, q2Questions);
+   let quiz1 = createQuizesPageArticle(quizOne);
+   let quiz2 = createQuizesPageArticle(quizTwo);
    mainsection.appendChild(quiz1);
    mainsection.appendChild(quiz2);
    let goBack = document.createElement('article');
@@ -463,11 +463,11 @@ function createQuizesPage(quizOne, q1Questions, quizTwo, q2Questions, topic){
 }
 
 // Creates the article for a quiz
-function createQuizesPageArticle(header, amount){
+function createQuizesPageArticle(header){
    article = document.createElement('ARTICLE');
    let h1 = document.createElement('h1');
    let p  = document.createElement('p');
-   let text = document.createTextNode('This quiz has ' + amount + ' questions');
+   let text = document.createTextNode('This quiz has 3 questions');
    p.appendChild(text);
    h1.textContent = header;
    h1.style.fontSize = '1.5em';
@@ -518,7 +518,9 @@ function createQuestionsPageArticle(header, type){
    article = document.createElement('ARTICLE');
    let h1 = document.createElement('h1');
    let p  = document.createElement('p');
-   let text = document.createTextNode('This is a ' + type + ' question');
+   let text;
+   if(type == 'Open'){text = document.createTextNode('This is a open question');}
+   else{text = document.createTextNode('This is a multiple choice question');}
    p.appendChild(text);
    h1.textContent = header;
    h1.style.fontSize = '1.5em';
