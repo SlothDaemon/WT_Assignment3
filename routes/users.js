@@ -61,7 +61,7 @@ router.get('/:profile', function(req, res, next) {
   let totalquestions;
   db.get(query, function(err, row){
     if (err) { throw err; }
-    if (row) {totalquesitons = row.count;}
+    if (row) {totalquestions = row.count;}
   })
   let p = req.params.profile;
   req.session.completions = req.session.completions || 0;

@@ -79,7 +79,6 @@ module.exports = function(){
             link: 'http://localhost:3000/history',
             correctAns: 'option1'
         }
-
         res.send(data);
     }
 
