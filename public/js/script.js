@@ -241,43 +241,63 @@ function changeSelected(){
    }
 }
 
-// If an answer to an MC question is selected, check if user is logged in, then evaluate or tell user to log in
-function evaluateMCAnswer(target, user){
-   if(user){
-      //ajax
-   }
-   else{
-      console.log("No user logged in");
-      if(target && target.nodeName == "INPUT" && target.type === 'radio'){
-         console.log("No user logged in");
+// If a quesion is answered, check if user is logged in, then evaluate or tell user to log in
+function evaluateAnswer(target, user, answered, question, type){
+   if(target && target.nodeName == "INPUT" && target.type === 'radio' || type == 'open'){
+      if(user){
+         let answer;
+         if (type == 'mc'){
+            answer = target.value;
+         }
+         else{
+            answer = "";
+            for (let i = 0; i<answered.length; i++){
+               answer += (answered[i].toLowerCase());
+            }
+         }
+
+         $.ajax({
+            type: 'GET',
+            url: 'http://localhost:3000/answer',
+            dataType: 'json',
+            data: {
+               answered: answer,
+               problemSt: question 
+            }
+         }).done(function(data){
+            if(data.eval){
+               target.parentNode.parentNode.style.color = 'green';
+               text = document.createTextNode("You answered correctly!");
+               p = document.createElement('p');
+               p.appendChild(text);
+               target.parentNode.appendChild(p);
+            }
+            else{
+               target.parentNode.parentNode.style.color = 'red';
+               a = document.createElement('a');
+               a.href = data.link;
+               text = document.createTextNode("You answered incorrectly! ");
+               atext = document.createTextNode("Click here to go to the topic's description page");
+               a.appendChild(atext);
+               p = document.createElement('p');
+               p.appendChild(text);
+               p.appendChild(a);
+               target.parentNode.appendChild(p);
+            }
+         }).fail(function(jqXHR, textStatus, err){
+            console.log('AJAX error response:', textStatus);
+         })
+      }
+      else{
          let p = document.createElement('p');
          let text = document.createTextNode("Log in to evaluate your answer!");
          p.appendChild(text);
          p.style.color = 'red';
          target.parentNode.appendChild(p);
+         
       }
    }
 }
-
-// If the evaluate button is clicked, check if user is logged in, then evaluate or tell user to log in
-function evaluateOpenAnswer(target, user, answered){
-   if(user){
-      let answer;
-      for (let i = 0; i<answered.length; i++){
-         answer += (answered[i].value.toLowerCase());
-      }
-      //ajax
-   }
-   else{
-      console.log("No user logged in");
-      let p = document.createElement('p');
-      let text = document.createTextNode("Log in to evaluate your answer!");
-      p.appendChild(text);
-      p.style.color = 'red';
-      target.parentNode.appendChild(p);
-   }
-}
-
 
 // Fill the assessment page
 function loadAssessment(){
@@ -286,7 +306,6 @@ function loadAssessment(){
       url: 'http://localhost:3000/load',
       dataType: 'json',
    }).done(function(data){
-         console.log("data succesfully sent");
          if(data.pageType == 'topics'){ createTopicsPage(data.topicOne, data.DLOne, data.topicTwo, data.DLTwo);}
          if(data.pageType == 'question'){ createAnswerPage(data)}
    }).fail(function(jqXHR, textStatus, err){
@@ -302,7 +321,6 @@ function clickedHome(){
       dataType: 'json',
       data: {type: 'home'}
    }).done(function(data){
-         console.log("data succesfully sent");
          if(data.pageType == 'topics'){ createTopicsPage(data.topicOne, data.DLOne, data.topicTwo, data.DLTwo);}
    }).fail(function(jqXHR, textStatus, err){
          console.log('AJAX error response:', textStatus);
@@ -320,7 +338,6 @@ function clickedTopic(Title){
          topic : Title
       }
    }).done(function(data){
-      console.log("Quizes info recieved");
       if(data.pageType == 'quizes'){createQuizesPage(data.quizOne, data.quizOneQuestions, data.quizTwo, data.quizTwoQuestions, data.topic)}
 
    }).fail(function(jqXHR, textStatus, err){
@@ -340,7 +357,6 @@ function clickedQuiz(Title, Topic){
          topic: Topic
       }
    }).done(function(data){
-      console.log("Questions info recieved");
       if(data.pageType == 'questions'){createQuestionsPage(data.questionOne, data.questionOneType, data.questionTwo, data.questionTwoType, data.questionThree, data.questionThreeType, data.quiz, data.topic)}
 
    }).fail(function(jqXHR, textStatus, err){
@@ -361,7 +377,6 @@ function clickedQuestion(Title, Quiz, Topic){
          topic: Topic
       }
    }).done(function(data){
-      console.log("Question info recieved");
       if(data.pageType == 'question'){createAnswerPage(data)}
 
    }).fail(function(jqXHR, textStatus, err){
@@ -528,10 +543,17 @@ function createAnswerPage(data){
    let answerForm;
    if (data.type == 'MultipleChoice'){
       answerForm = createAnswerFormMC(data.option1, data.option2, data.option3, data.option4);
-      question.addEventListener('click', function(e){evaluateMCAnswer(e.target, data.user)});
+      if(data.attempt){
+         let attemptP = document.createElement('p');
+         let attempttext = document.createTextNode('You have answered this question correctly already');
+         attemptP.appendChild(attempttext);
+         attemptP.style.collor = 'green';
+         answerForm.appendChild(attemptP);
+      }
+      question.addEventListener('click', function(e){evaluateAnswer(e.target, data.user, null, data.question, 'mc')});
    }
    else{
-      answerForm = createAnswerFormOpen(data.user);
+      answerForm = createAnswerFormOpen(data.user, data.question);
    }
    question.appendChild(answerForm);
    mainsection.appendChild(question);
@@ -553,7 +575,7 @@ function createAnswerFormMC(option1, option2, option3, option4){
 }
 
 // Creates the answer form for a open question
-function createAnswerFormOpen(user){
+function createAnswerFormOpen(user, question){
    form = document.createElement('FORM');
    input = document.createElement('INPUT');
    input.setAttribute('type','text');
@@ -564,7 +586,7 @@ function createAnswerFormOpen(user){
    let button = document.createElement('button');
    button.setAttribute('type', 'button');
    button.appendChild(document.createTextNode('Evaluate'));
-   button.addEventListener('click', function(e){evaluateOpenAnswer(e.target, user, input.value)});
+   button.addEventListener('click', function(e){evaluateAnswer(e.target, user, input.value, question, 'open')});
    form.appendChild(label);
    form.appendChild(input);
    form.appendChild(button);
@@ -576,6 +598,7 @@ function createAnswersMC(form, option){
    input.setAttribute('type','radio');
    input.setAttribute('id',option);
    input.setAttribute('name', 'answer');
+   input.setAttribute('value', option);
 
    var label = document.createElement("LABEL");
    label.setAttribute('for',option);

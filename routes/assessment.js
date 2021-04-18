@@ -29,37 +29,59 @@ module.exports = function(){
         res.send(data);
     }
 
+    // Evaluates answer to open question, stores attempt in db
+    this.evalAns = function(req,res){
+        let query = 'SELECT qa.Answer, t.Descriptionlink, qa.QAID FROM Question qa, Quiz q, Topic t WHERE qa.Problem_Statement = ' + req.query.problemSt + ' AND qa.Quiz = q.QID AND q.Topic = t.TID;';
+        /*db.get(query, function(err, row){
+            if (err) { throw err; }
+            if(row){
+                let answerEval = (row.Answer == req.query.answered);
+                var data = {
+                    eval: answerEval,
+                    link: row.Descriptionlink
+                }
+                var stmt = db.prepare('INSERT INTO Attempt VALUES (?,?,?)');
+                stmt.run(row.QAID, req.session.user, answerEval);
+                stmt.finalize();
+                console.log("Attempt stored");
+
+                res.send(data);
+            }
+        })*/
+        let answerEval = (req.query.answered == 'correct' || req.query.answered == 'option1');
+        var data = {
+            eval: answerEval,
+            link: 'http://localhost:3000/history'
+        }
+        res.send(data);
+    }
+
     // When user wants to go back to the topics page
     this.homeClicked = function(req,res){
-        console.log("home clicked");
         var data = topicsPage();
         res.send(data);
     }
 
     // When user wants to go to quizes page
     this.topicClicked = function(req,res){
-        console.log("topic clicked");
         var data = quizesPage(req.query.topic);
         res.send(data);
     }
 
     // When user wants to go to questions page
     this.quizClicked = function(req,res){
-        console.log("quiz clicked");
         var data = questionsPage(req.query.quiz, req.query.topic);
         res.send(data);
     }
 
     // When user wants to go to specific question, if no user is logged in req.session.user will be null
     this.questionClicked = function(req,res){
-        console.log("question clicked");
         var data = answerPage(req.query.question, req.query.quiz, req.query.topic, req.session.user);
         res.send(data);
     }
 
     // Respond with topics data
     this.topicsPage = function(){
-        console.log("frontPage function");
         let query = 'SELECT T_Title, DescriptionLink FROM Topic;';
         /*db.get(query, function(err, result){
             if (err) { throw err; }
@@ -87,7 +109,6 @@ module.exports = function(){
 
     // Resopnd with quizes data
     this.quizesPage = function(Title){
-        console.log("quizespage function");
         let query = 'SELECT q.Q_Title FROM Quiz q, Topic t WHERE q.Topic = t.TID AND t.T_title = ' + Title + ';'; 
         /*db.get(query, function(err, result){
             if (err) { throw err; }
@@ -133,7 +154,6 @@ module.exports = function(){
 
     // Respond with questions data
     this.questionsPage = function(Title, Topic){
-        console.log("questionspage function");
         let query = 'SELECT qa.QA_Title, qa.Type FROM Question qa, Quiz q WHERE qa.Quiz = q.QID AND q.Q_Title = ' + Title + ';';
         /*db.get(query, function(err, result){
             if (err) { throw err; }
@@ -168,14 +188,13 @@ module.exports = function(){
 
     // Respond with data of a specific question
     this.answerPage = function(Title, Quiz, Topic, User){
-        console.log(Quiz);
         let query = 'SELECT QAID, QA_Title, Type, Problem_Statement FROM Question WHERE QA_Title = ' + Title + ';';
         /*db.get(query, function(err, row){
             if(err) { throw err; }
             if(row){
                 let Attempt;
                 if(User != null){
-                    let getAttempt = 'SELECT a.Attempt FROM Attempt a WHERE a.User = ' + User + ' AND a.Question IN (SELECT qa.QAID FROM Question qa WHERE qa.QA_Title = ' + row.QA_Title + ' AND qa.Quiz IN (SELECT q.QID FROM Quiz q, WHERE q.Q_Title = ' + Quiz + ')) AND a.Attempt = "correct";';
+                    let getAttempt = 'SELECT a.Attempt FROM Attempt a WHERE a.User = ' + User + ' AND a.Question IN (SELECT qa.QAID FROM Question qa WHERE qa.QA_Title = ' + row.QA_Title + ' AND qa.Quiz IN (SELECT q.QID FROM Quiz q, WHERE q.Q_Title = ' + Quiz + ')) AND a.Attempt = true;';
                     db.get(getAttempt, function(err, row2){
                         if (err) { throw err;}
                         if(row2){
@@ -260,7 +279,7 @@ module.exports = function(){
                 quiz: Quiz,
                 topic: Topic,
                 user: User,
-                attempt: null
+                attempt: true
             }
             return data;
         }

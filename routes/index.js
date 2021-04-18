@@ -56,11 +56,15 @@ router.get('/click', function(req,res){
     quizClicked(req,res);
   }
   else if(req.query.type == 'question'){
-    console.log("Were here");
     questionClicked(req,res);
   }
   else if(req.query.type == 'home'){
     homeClicked(req,res);
   }
 });
+
+router.get('/answer', function(req,res){
+  evalAns(req,res);
+})
+
 module.exports = router;
