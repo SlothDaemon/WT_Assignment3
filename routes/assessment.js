@@ -29,10 +29,17 @@ module.exports = function(){
         res.send(data);
     }
 
-    // Evaluates answer to open question, stores attempt in db
+    // Evaluates answer to question, stores attempt in db, changes user's completion when answer is right
     this.evalAns = function(req,res){
+        let alreadyAnswered;
+        let getAttempt = 'SELECT a.Attempt FROM Attempt a, Question qa WHERE a.Question = qa.QAID AND qa.Problem_Statement = ' + req.query.problemSt + ' AND a.Attempt = true;';
         let query = 'SELECT qa.Answer, t.Descriptionlink, qa.QAID FROM Question qa, Quiz q, Topic t WHERE qa.Problem_Statement = ' + req.query.problemSt + ' AND qa.Quiz = q.QID AND q.Topic = t.TID;';
-        /*db.get(query, function(err, row){
+        /*db.get(getAttempt, function(err1, attemptrow){
+            if (err1) { throw err1; }
+            if(attemptrow){ alreadyAnswered = true;}
+            else{ alreadyAnswered = false;}
+        })
+        db.get(query, function(err, row){
             if (err) { throw err; }
             if(row){
                 let answerEval = (row.Answer == req.query.answered);
@@ -40,19 +47,37 @@ module.exports = function(){
                     eval: answerEval,
                     link: row.Descriptionlink
                 }
-                var stmt = db.prepare('INSERT INTO Attempt VALUES (?,?,?)');
-                stmt.run(row.QAID, req.session.user, answerEval);
-                stmt.finalize();
-                console.log("Attempt stored");
-
+                if(!alreadyAnswered){
+                    var stmt = db.prepare('INSERT INTO Attempt VALUES (?,?,?)');
+                    stmt.run(row.QAID, req.session.user, answerEval);
+                    stmt.finalize();
+                    console.log("Attempt stored");
+                    let getProfile = 'SELECT p.completion FROM PROFILES p WHERE p.username = ' + req.session.user + ';';
+                    let completion;
+                    db.get(getProfile, function(err2, profilerow){
+                        if (err2) { throw err2; }
+                        if (profilerow){
+                            completion = profilerow.completion;
+                        }
+                        db.run('UPDATE PROFILES SET completion = ? WHERE username = ?;',[
+                            completion + 1,
+                            req.session.user
+                        ],function(error){
+                            if (error) {console.log(error)}
+                        })
+                    })
+                    
+                }
                 res.send(data);
             }
         })*/
+
         let answerEval = (req.query.answered == 'correct' || req.query.answered == 'option1');
         var data = {
             eval: answerEval,
             link: 'http://localhost:3000/history'
         }
+
         res.send(data);
     }
 

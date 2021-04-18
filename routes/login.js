@@ -83,7 +83,7 @@ function auth(name, pass, f){
   });
 }
 
-/* Catches ALL POST requests. Currently, only POST request is the login loginDbFile. 
+/* Catches ALL POST requests
 Furthermore, it also catches on which page it happened */
 pages = ['/','/assessment','/bernerslee','/features','/history','/w3c'];
 login.post('*', function(req,res){
