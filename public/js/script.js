@@ -276,13 +276,15 @@ function evaluateAnswer(target, user, answered, question, type){
                target.parentNode.parentNode.style.color = 'red';
                a = document.createElement('a');
                a.href = data.link;
-               text = document.createTextNode("You answered incorrectly! ");
+               text = document.createTextNode("You answered incorrectly! The Correct answer is: " + data.correctAns + ".");
                atext = document.createTextNode("Click here to go to the topic's description page");
                a.appendChild(atext);
                p = document.createElement('p');
                p.appendChild(text);
-               p.appendChild(a);
+               p2 = document.createElement('p');
+               p2.appendChild(a);
                target.parentNode.appendChild(p);
+               target.parentNode.appendChild(p2);
             }
          }).fail(function(jqXHR, textStatus, err){
             console.log('AJAX error response:', textStatus);

@@ -45,7 +45,8 @@ module.exports = function(){
                 let answerEval = (row.Answer == req.query.answered);
                 var data = {
                     eval: answerEval,
-                    link: row.Descriptionlink
+                    link: row.Descriptionlink,
+                    correctAns: row.Answer
                 }
                 if(!alreadyAnswered){
                     var stmt = db.prepare('INSERT INTO Attempt VALUES (?,?,?)');
@@ -75,7 +76,8 @@ module.exports = function(){
         let answerEval = (req.query.answered == 'correct' || req.query.answered == 'option1');
         var data = {
             eval: answerEval,
-            link: 'http://localhost:3000/history'
+            link: 'http://localhost:3000/history',
+            correctAns: 'option1'
         }
 
         res.send(data);
