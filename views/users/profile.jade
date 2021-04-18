@@ -14,7 +14,7 @@ block content
           form#editbio
       aside#completion
           h3 Report and completion
-          - var percentile = (profile.completed / total) * 100;
+          - var percentile = ((profile.completed / total) * 100).toFixed(2);
               p #{profile.name} has completed #{profile.completed} out of #{total} questions, or a completion rate of #{percentile}%!
               if user == profile.name
                 p This session, you have completed #{profile.session} questions!

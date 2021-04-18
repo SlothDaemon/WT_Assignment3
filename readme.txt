@@ -16,6 +16,11 @@ The database has seven tables. The Topic table holds the data of each topic. The
 
 logins:
 admin, opensesame
+RavanStrijker, $Uv[E6%C
+DanielSalamons, \[2/z-MT
+PimVersteeg, Y*\yF7~D
+TimBL, d\\h7SA:
+SteveJobs, *$f/6R&M
 
 no extra credit features were done.
 

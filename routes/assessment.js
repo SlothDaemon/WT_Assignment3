@@ -6,8 +6,7 @@ var db = new sqlite3.Database(dbFile);
 module.exports = function(){
     // When no user is loged in, the topics page is shown on load
     this.loadNoLogin = function(req,res){
-        console.log("No login");
-        var data = topicsPage(res);
+        topicsPage(res);
     };
 
     // When a user is loged in load topics page or the user's active question
@@ -16,10 +15,10 @@ module.exports = function(){
         db.get(query, function(err, row){
             if (err) { throw err; }
             if(row){
-                var data = answerPage(res, row.QA_Title, row.Q_Title, row.T_Title, req.session.user);
+                answerPage(res, row.QA_Title, row.Q_Title, row.T_Title, req.session.user);
             }
             else{
-                var data = topicsPage(res);
+                topicsPage(res);
             }
         })
     }
@@ -45,23 +44,25 @@ module.exports = function(){
                 }
                 if(!alreadyAnswered){
                     var stmt = db.prepare('INSERT INTO Attempt VALUES (?,?,?)');
-                    stmt.run(row.QAID, req.session.user, answerEval);
+                    stmt.run(row.QAID, req.session.user, '' + answerEval + '');
                     stmt.finalize();
                     console.log("Attempt stored");
                     let getProfile = 'SELECT p.completion FROM PROFILES p WHERE p.username = "' + req.session.user + '";';
                     let completion;
-                    db.get(getProfile, function(err2, profilerow){
-                        if (err2) { throw err2; }
-                        if (profilerow){
-                            completion = profilerow.completion;
-                        }
-                        db.run('UPDATE PROFILES SET completion = ? WHERE username = ?;',[
-                            completion + 1,
-                            req.session.user
-                        ],function(error){
-                            if (error) {console.log(error)}
+                    if(answerEval){
+                        db.get(getProfile, function(err2, profilerow){
+                            if (err2) { throw err2; }
+                            if (profilerow){
+                                completion = profilerow.completion;
+                            }
+                            db.run('UPDATE PROFILES SET completion = ? WHERE username = ?;',[
+                                completion + 1,
+                                req.session.user
+                            ],function(error){
+                                if (error) {console.log(error)}
+                            })
                         })
-                    })
+                    }
                     
                 }
                 if (answerEval){
@@ -75,22 +76,22 @@ module.exports = function(){
 
     // When user wants to go back to the topics page
     this.homeClicked = function(req,res){
-        var data = topicsPage(res);
+        topicsPage(res);
     }
 
     // When user wants to go to quizes page
     this.topicClicked = function(req,res){
-        var data = quizesPage(res, req.query.topic);
+        quizesPage(res, req.query.topic);
     }
 
     // When user wants to go to questions page
     this.quizClicked = function(req,res){
-        var data = questionsPage(res, req.query.quiz, req.query.topic);
+        questionsPage(res, req.query.quiz, req.query.topic);
     }
 
     // When user wants to go to specific question, if no user is logged in req.session.user will be null
     this.questionClicked = function(req,res){
-        var data = answerPage(res, req.query.question, req.query.quiz, req.query.topic, req.session.user);
+       answerPage(res, req.query.question, req.query.quiz, req.query.topic, req.session.user);
     }
 
     // Respond with topics data
@@ -159,7 +160,7 @@ module.exports = function(){
             if(row){
                 let Attempt;
                 if(User != null){
-                    let getAttempt = 'SELECT a.Attempt FROM Attempt a WHERE a.User = "' + User + '" AND a.Question IN (SELECT qa.QAID FROM Question qa WHERE qa.QA_Title = "' + row.QA_Title + '" AND qa.Quiz IN (SELECT q.QID FROM Quiz q, WHERE q.Q_Title = ' + Quiz + ')) AND a.Attempt = true;';
+                    let getAttempt = 'SELECT a.Attempt FROM Attempt a, Question qa, Quiz q WHERE a.User = "' + User + '" AND a.Question = qa.QAID AND qa.QA_Title = "' + row.QA_Title + '" AND qa.Quiz = q.QID AND q.Q_Title = "' + Quiz + '" AND a.Attempt = "true";';
                     db.get(getAttempt, function(err, row2){
                         if (err) { throw err;}
                         if(row2){
@@ -168,7 +169,7 @@ module.exports = function(){
                         else{ Attempt = null}
                     })
                     
-                    db.run('UPDATE PROFILES SET question = ? WHERE username = ?'[
+                    db.run('UPDATE PROFILES SET question = ? WHERE username = ?;',[
                         row.QAID,
                         User
                     ],function(error){
