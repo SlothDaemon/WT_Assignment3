@@ -79,6 +79,11 @@ module.exports = function(){
             link: 'http://localhost:3000/history',
             correctAns: 'option1'
         }
+        req.session.completions = req.session.completions || 0;
+        if (answerEval)
+        {
+            req.session.completions += 1;
+        }
         res.send(data);
     }
 

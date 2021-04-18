@@ -8,7 +8,6 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
 require('./routes/assessment')();
-//var assessmentRouter = require('./routes/assessment');
 
 const e = require('express');
 const session = require('express-session');
@@ -35,8 +34,6 @@ app.use(session({
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-//app.use('/load', assessmentRouter);
-
 
 
 /* Catches ALL POST requests. Currently, only POST requests are the logins and bio updates. 
